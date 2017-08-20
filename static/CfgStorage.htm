@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta content="text/html; charset=utf-8" />
+    <link href="res/themes/default/easyui.css" rel="stylesheet" type="text/css" />
+    <link href="res/themes/icon.css" rel="stylesheet" type="text/css" />
+    <script src="res/js/jquery.min.js" type="text/javascript"></script>
+    <script src="res/js/jquery.easyui.min.js" type="text/javascript"></script>
+    <script src="res/js/easyui-lang-zh_CN.js" type="text/javascript"></script>
+    <script src="res/js/jquery.formgrid.js" type="text/javascript"></script>
+
+    <script src="res/js/Configuration.js" type="text/javascript"></script>
+    <script src="res/js/common.js" type="text/javascript"></script>
+    <style type="text/css">
+        .grid_body{ border-top-width:0px; }
+    </style>
+</head>
+<body>
+    <div id="toolbar" style="padding:5px;height:auto;">
+        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" onclick="$('#dgrid').formgrid('addRow');">添加</a>
+        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-edit" onclick="$('#dgrid').formgrid('editRow');">编辑</a>
+        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" onclick="$('#dgrid').formgrid('destroyRow');">删除</a>
+        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-save" onclick="$('#dgrid').formgrid('saveRow');">保存</a>
+        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-undo" onclick="$('#dgrid').formgrid('cancelRow');">取消</a>
+        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-refresh" onclick="$('#dgrid').formgrid('reload');">刷新</a>
+	</div>
+	<table id="dgrid" title="">
+		<thead>
+			<tr>
+                <th field="StoreCode" width="120" align="center" editor="{type:'validatebox',options:{required:true}}" >堆场名称</th>
+                <th field="Description" width="280" align="center" editor="text" >堆场说明</th>
+                <th field="CoalType" width="100" align="center" editor="{type:'dropdown',options:{required:true, items:'粉煤,块煤,混合'}}">存煤类型</th>
+		        <th field="Amount" width="120" align="right" halign="center" formatter="fmt_ton">存煤数量</th>
+		        <th field="Capacity" width="120" align="right" halign="center" editor="{type:'numberbox',options:{required:true}}" formatter="fmt_ton">堆场容量</th>		        
+			</tr>
+		</thead>
+	</table>
+
+    <script type="text/javascript">
+        $(function () {
+            var svc = new Configuration();
+            $('#dgrid').formgrid({
+                url: svc.ListStorage(),
+                insertUrl: svc.SetStorage(),
+                updateUrl: svc.SetStorage(),
+                destroyUrl: svc.RemoveStorage()
+            });
+        });
+        function fmt_ton(val) {
+            return val ? (val + ' 吨') : '';
+        }
+    </script>
+</body>
+</html>

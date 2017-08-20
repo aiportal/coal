@@ -1,0 +1,231 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta content="text/html; charset=utf-8" />
+    <link href="res/themes/default/easyui.css" rel="stylesheet" type="text/css" />
+    <link href="res/themes/icon.css" rel="stylesheet" type="text/css" />
+    <script src="res/js/jquery.min.js" type="text/javascript"></script>
+    <script src="res/js/jquery.easyui.min.js" type="text/javascript"></script>
+    <script src="res/js/easyui-lang-zh_CN.js" type="text/javascript"></script>
+    <script src="res/js/datagrid-groupview.js" type="text/javascript"></script>
+
+    <script src="res/js/Configuration.js" type="text/javascript"></script>
+    <script src="res/js/common.js" type="text/javascript"></script>
+    <style type="text/css">
+        .grid_body{ border-top-width:0px; }
+    </style>
+</head>
+<body style="overflow:scroll;">
+    <div id="toolbar" style="padding:5px;height:auto;">
+		日期: <input id="start" class="easyui-datebox" style="width:100px" required />
+		到: <input id="end" class="easyui-datebox" style="width:100px" required />
+        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-sum" onclick="$('#dgrid').datagrid('reload');">统计</a>
+        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-print" onclick="$('#dgrid').datagrid('reload');">打印</a>
+	</div>
+	<table id="dgrid" title="">
+		<thead>
+            <tr>
+                <th colspan="16">进煤</th>
+                <th colspan="5">消耗</th>
+                <th colspan="1">发煤</th>
+                <th colspan="4">返煤</th>
+                <th colspan="11">库存</th>
+            </tr>
+            <tr>
+                <th colspan="5">汽车</th>
+                <th colspan="8">火车</th>
+                <th colspan="2"></th>
+                <th colspan="1"></th>
+                <th colspan="5"></th>
+                <th colspan="1"></th>
+                <th colspan="4"></th>
+                <th colspan="5">块煤</th>
+                <th colspan="5">粉煤</th>
+                <th colspan="1">累计库存</th>
+            </tr>
+            <tr>
+                <th colspan="2">块煤</th>
+                <th colspan="3">粉煤</th>
+
+                <th colspan="4">块煤</th>
+                <th colspan="4">粉煤</th>
+                <th colspan="2">小计</th>
+                <th colspan="1">日进煤</th>
+
+                <th colspan="1">块煤</th>
+                <th colspan="3">粉煤</th>
+                <th colspan="1">日进煤</th>
+
+                <th colspan="1"></th>
+
+                <th colspan="1">块煤</th>
+                <th colspan="2">粉煤</th>
+                <th colspan="1">日进煤</th>
+
+                <th colspan="4">B105</th>
+                <th colspan="1">北堆场</th>
+                <th colspan="1">B118</th>
+                <th colspan="1">B118A</th>
+                <th colspan="1">北堆场</th>
+                <th colspan="2">小计</th>
+                <th colspan="1"></th>
+            </tr>
+			<tr>
+                <th field="Yard" width="40" align="center" >北堆场</th>
+                <th field="Coal" width="30" align="center" >B101</th>
+
+                <th field="Car" width="40" align="center" >北堆场</th>
+                <th field="Seg" width="30" align="center" >B118</th>
+                <th field="Weight" width="30" align="center" >B118A</th>
+
+                <th field="Car" width="40" align="center" >北堆场</th>
+                <th field="Car" width="10" align="center" >节</th>
+                <th field="Seg" width="30" align="center" >B101</th>
+                <th field="Car" width="10" align="center" >节</th>
+
+                <th field="Car" width="40" align="center" >北堆场</th>
+                <th field="Car" width="10" align="center" >节</th>
+                <th field="Seg" width="30" align="center" >B118</th>
+                <th field="Car" width="10" align="center" >节</th>
+
+                <th field="Yard" width="10" align="center" >块</th>
+                <th field="Coal" width="10" align="center" >粉</th>
+                <th field="Coal" width="40" align="center" ></th>
+
+                <th field="Coal" width="40" align="center" >200#</th>
+                <th field="Coal" width="40" align="center" >1600#AB</th>
+                <th field="Coal" width="40" align="center" >1600#C</th>
+                <th field="Coal" width="40" align="center" >小计</th>
+                <th field="Coal" width="40" align="center" ></th>
+
+                <th field="Coal" width="30" align="center" ></th>
+
+                <th field="Coal" width="30" align="center" >B101</th>
+                <th field="Coal" width="30" align="center" >B118</th>
+                <th field="Coal" width="30" align="center" >B118A</th>
+                <th field="Coal" width="30" align="center" ></th>
+
+                <th field="Coal" width="10" align="center" >1</th>
+                <th field="Coal" width="10" align="center" >2</th>
+                <th field="Coal" width="10" align="center" >3</th>
+                <th field="Coal" width="10" align="center" >4</th>
+                <th field="Coal" width="30" align="center" ></th>
+                <th field="Coal" width="30" align="center" ></th>
+                <th field="Coal" width="30" align="center" ></th>
+                <th field="Coal" width="30" align="center" ></th>
+                <th field="Coal" width="30" align="center" >块</th>
+                <th field="Coal" width="30" align="center" >粉</th>
+                <th field="Coal" width="30" align="center" ></th>
+			</tr>
+		</thead>
+	</table>
+
+    <script type="text/javascript">
+        $('#dgrid').datagrid({
+            noheader: true,
+            fit: true,
+            rownumbers: true,
+            striped: true,
+            showFooter: true,
+            singleSelect: true,
+            remoteSort: false,
+            bodyCls: 'grid_body',
+            toolbar: '#toolbar',
+
+            // group
+            //groupField: 'Yard',
+            //view: groupview,
+            //groupFormatter: function (value, rows) {
+//                var w = 0;
+//                $(rows).each(function(k,v){
+//                    w += v.Weight;
+//                });
+//                return '<a class="btn-group"><strong>' + value + '</strong> - 进煤：<b>' + w + '</b> 吨。</a>';
+//            },
+
+            loader: function (param, success, error) {
+                function filter(objs) {
+                    //$(objs).each(function (k, v) {
+                    //});
+                    success(objs);
+
+                    $('#dgrid').datagrid('collapseGroup');
+                }
+                //new Application().ListApplication(param, filter, error);
+                filter([
+                    //{ Yard: 'B101', Coal: '块煤', Car: '汽车', Seg: 1, Weight: 300 },
+                    //{ Yard: 'B118', Coal: '', Car: '', Seg: 0, Weight: 0 },
+                    //{ Yard: 'B118A', Coal: '粉煤', Car: '火车', Seg: 2, Weight: 600 },
+                    //{ Yard: '北堆场', Coal: '', Car: '', Seg: 0, Weight: 0 }
+                ]);
+            }
+        });
+        
+    </script>
+
+    <script type="text/javascript">
+        $.extend($.fn.datagrid.defaults.editors, {
+            program: {
+                init: function (container, options) {
+                    var filter = function (data) {
+                        $(data).each(function (k, v) {
+                            v.id = escape(v.Path);
+                            v.text = v.Path;
+                            v.state = v.IsProgram ? 'opened' : 'closed';
+                            if (v.Path.length <= 3)
+                                v.iconCls = 'icon-save';
+                            if (v.IsProgram)
+                                v.iconCls = 'icon-ok';
+                        });
+                        return data;
+                    };
+                    var input = $('<ul></ul>').appendTo(container);
+                    setTimeout(function () {
+                        var current = null;
+                        $(input).combotree($.extend({}, options, {
+                            panelHeight: 500,
+                            url: new Configuration().ListProgram(),
+                            loadFilter: filter,
+                            formatter: function (val) {
+                                return val.Name;
+                            },
+                            onBeforeSelect: function (node) {
+                                current = node;
+                                var path = unescape(node.id);
+                                var ext = path.substring(path.length - 4).toLowerCase();
+                                return (ext == '.exe');
+                            }//,
+//                            onHidePanel: function () {
+//                                var node = $(this).combotree('tree').tree('getSelected');
+//                                node = (node == current) ? node : current;
+//                                var path = node ? unescape(node.id) : null;
+//                                var ext = path ? path.substring(path.length - 4).toLowerCase() : null;
+//                                if (ext != '.exe')
+//                                    $(this).combotree('showPanel');
+//                            },
+//                            onDblClick: function (node) {
+//                                $(this).tree('toggle', node.target);
+//                            }
+                        }));
+                    }, 0);
+                    return input;
+                },
+                destroy: function (target) {
+                    $(target).remove();
+                },
+                getValue: function (target) {
+                    return $(target).combotree('getText');
+                },
+                setValue: function (target, value) {
+                    $(target).val(value);
+                },
+                resize: function (target, width) {
+                    $(target)._outerWidth(width);
+                }
+            }
+        });
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta content="text/html; charset=utf-8" />
+    <link href="res/themes/default/easyui.css" rel="stylesheet" type="text/css" />
+    <link href="res/themes/icon.css" rel="stylesheet" type="text/css" />
+    <script src="res/js/jquery.min.js" type="text/javascript"></script>
+    <script src="res/js/jquery.easyui.min.js" type="text/javascript"></script>
+    <script src="res/js/easyui-lang-zh_CN.js" type="text/javascript"></script>
+    <script src="res/js/jquery.formgrid.js" type="text/javascript"></script>
+
+    <script src="res/js/StoreService.js" type="text/javascript"></script>
+    <script src="res/js/common.js" type="text/javascript"></script>
+    <style type="text/css">
+        .grid_body{ border-top-width:0px; }
+    </style>
+</head>
+<body>
+    <div id="toolbar" style="padding:5px;height:auto;">
+        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" onclick="$('#dgrid').formgrid('addRow');">添加</a>
+        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-edit" onclick="$('#dgrid').formgrid('editRow');">编辑</a>
+        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" onclick="$('#dgrid').formgrid('destroyRow');">删除</a>
+        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-save" onclick="$('#dgrid').formgrid('saveRow');">保存</a>
+        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-undo" onclick="$('#dgrid').formgrid('cancelRow');">取消</a>
+        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-refresh" onclick="$('#dgrid').formgrid('reload');">刷新</a>
+	</div>
+	<table id="dgrid" title="">
+		<thead>
+			<tr>
+                <th field="Group" width="120" align="center"
+                    editor="{type:'dropdown',options:{required:true, items:'二车间一班组,二车间二班组,二车间三班组,二车间四班组'}}" >当班班组</th>
+                <th field="MoveTime" width="160" align="center" editor="{type:'datetime',options:{required:true}}" >操作时间</th>
+                <th field="StoreCode" width="120" align="center" editor="{type:'dropdown',options:{required:true, items:'B118,B118A'}}" >来源堆场</th>
+                <th field="BalanceCode" width="120" align="center" editor="{type:'dropdown',options:{required:true, items:'W1003', value:'W1003'}}" >地磅</th>
+		        <th field="Amount" width="120" align="right" halign="center" editor="{type:'numberbox', options:{required:true, precision:3}}" >数量</th>
+		        <th field="DestStore" width="120" align="center" editor="{type:'dropdown',options:{required:true, items:'B109',value:'B109'}}">目的仓储</th>
+			</tr>
+		</thead>
+	</table>
+
+    <script type="text/javascript">
+        $(function () {
+            var svc = new StoreService();
+            var obj = {MoveType:'Chunk', CoalType:'粉煤', DestCoal:'块煤'};
+            $('#dgrid').formgrid({
+                url: svc.ListMove({ type: 'Chunk' }),
+                insertUrl: svc.SetMove(obj),
+                updateUrl: svc.SetMove(obj),
+                destroyUrl: svc.RemoveMove()
+            });
+        });
+    </script>
+
+</body>
+</html>

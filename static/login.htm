@@ -1,0 +1,122 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>天脊数字化煤场管理系统</title>
+    <meta content="text/html; charset=utf-8" />
+    <link href="res/themes/default/easyui.css" rel="stylesheet" type="text/css" />
+    <link href="res/themes/icon.css" rel="stylesheet" type="text/css" />
+    <script src="res/js/jquery.min.js" type="text/javascript"></script>
+    <script src="res/js/jquery.easyui.min.js" type="text/javascript"></script>
+    <script src="res/js/easyui-lang-zh_CN.js" type="text/javascript"></script>
+    <script src="res/js/jquery.md5.js" type="text/javascript"></script>
+
+    <script src="res/js/Configuration.js" type="text/javascript"></script>
+    <script src="res/js/Admin.js" type="text/javascript"></script>
+    <style type="text/css">
+        body {background: url("res/img/bg.jpg") center center no-repeat fixed;}
+        .window-mask { opacity: 0; }
+        #login_panel { background: url("res/img/login.png") no-repeat left; }
+        #tool_panel { height: 30px; padding: 15px 15px 0px 10px; }
+    </style>
+</head>
+<body>
+	<div id="login" class="easyui-dialog" title="&nbsp;天脊数字化煤场管理系统 - 登录" style="padding:10px;"
+    data-options="
+        modal: true,
+        closable: false,
+        draggable: false,
+        width: 380,
+        height: 220,
+        tools: '#tools',
+        iconCls: 'icon-lock'
+    ">
+        <div class="easyui-layout" data-options="fit:true">
+            <div id="login_panel" data-options="
+                region: 'center',
+                border: false
+            ">
+		        <div style="padding:5px 40px; float:right;">
+			        <div style="padding: 3px 25px;"><b>帐号:</b></div>
+                    <img src="res/img/user.png" alt="" style="vertical-align:text-bottom;" />
+			        <input id="username" class="easyui-validatebox" style="width:160px" />
+		        </div>
+		        <div style="padding:5px 40px; float:right;">
+			        <div style="padding: 3px 25px;"><b>密码:</b></div>
+                    <img src="res/img/key.png" alt="" style="vertical-align:text-bottom;" />
+			        <input id="password" class="easyui-validatebox" style="width:160px" type="password" />
+		        </div>
+            </div>
+            <div id="tool_panel" data-options="
+                region:'south',
+                border: false
+            ">
+                <div style="text-align:right;">
+                    <a href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-ok'" onclick="btn_login();">登录</a>
+                    <a href="javascript:void(0);" class="easyui-linkbutton" data-options="iconCls:'icon-undo'" onclick="btn_reset();">重置</a>
+                </div>
+            </div>
+        </div>
+	</div>
+
+    <div style="display:none;">
+        <div id="tools">
+		    <a id="error_info" href="javascript:void(0)" class="icon-no" style="display:none;"></a>
+		    <a id="help_info" href="http://www.ultragis.com/cn/csas/help.htm" target="_blank" class="icon-help" title="查看帮助"></a>
+	    </div>
+        <div id="info_tip">
+            <div style="padding:10px 5px;">
+                <img src="res/img/logo.png" alt="" />
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(function () {
+            $('#username').focus();
+            $('#username').keypress(function (e) {
+                if (e.which == 13) {
+                    btn_login();
+                    return false;
+                }
+            });
+            $('#password').keypress(function (e) {
+                if (e.which == 13) {
+                    btn_login();
+                    return false;
+                }
+            });
+        });
+
+        function btn_login() {
+            var user = $('#username').val();
+            var pwd = $('#password').val();
+            if (user.length > 0 && pwd.length > 0) {
+                var h = 'bfbd';
+                var p = { user: user, pwd: $.md5(h + pwd + h) };
+                new Admin().Login(p, function (data) {
+                    if (data) {
+                        window.location.href = 'main.htm';
+                    }
+                    else {
+                        $('#error_info').show().tooltip({
+                            position: 'left',
+                            content: '登录错误，请重试。',
+                            onShow: function () { $(this).tooltip('tip').css({ borderColor: 'red' }); }
+                        }).tooltip('show');
+                    }
+                });
+            }
+            else {
+                if (user.length == 0)
+                    $('#username').focus();
+                else
+                    $('#password').focus();
+            }
+        }
+        function btn_reset() {
+            $('#username').val('');
+            $('#password').val('');
+        }
+    </script>
+</body>
+</html>

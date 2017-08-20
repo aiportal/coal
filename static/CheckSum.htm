@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta content="text/html; charset=utf-8" />
+    <link href="res/themes/default/easyui.css" rel="stylesheet" type="text/css" />
+    <link href="res/themes/icon.css" rel="stylesheet" type="text/css" />
+    <script src="res/js/jquery.min.js" type="text/javascript"></script>
+    <script src="res/js/jquery.easyui.min.js" type="text/javascript"></script>
+    <script src="res/js/easyui-lang-zh_CN.js" type="text/javascript"></script>
+    <script src="res/js/jquery.formgrid.js" type="text/javascript"></script>
+    <script src="res/js/datagrid-groupview.js" type="text/javascript"></script>
+
+    <script src="res/js/CheckService.js" type="text/javascript"></script>
+    <script src="res/js/common.js" type="text/javascript"></script>
+    <style type="text/css">
+        .grid_body{ border-top-width:0px; }
+    </style>
+</head>
+<body>
+    <div id="toolbar" style="padding:5px;height:auto;">
+		日期: <input id="start" style="width:140px" class="easyui-datetimebox" showSeconds="false" required />
+		到: <input id="end" style="width:140px" class="easyui-datetimebox" showSeconds="false" required />
+        产地: <input id="Locality" style="width:80px" class="easyui-validatebox" />
+        煤种: <input id="CoalType" style="width:80px;" class="easyui-validatebox" />
+        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-sum" onclick="$('#dgrid').datagrid('reload');">统计</a>
+        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-collapse" onclick="$('#dgrid').datagrid('collapseGroup');"></a>
+        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-expand" onclick="$('#dgrid').datagrid('expandGroup');"></a>
+	</div>
+	<table id="dgrid" title="">
+		<thead>
+			<tr>
+                <th field="Name" width="120" align="center" formatter="fmt_store" >票据号</th>
+                <th field="Locality" width="80" align="center" >产地</th>
+                <th field="CarCode" width="100" align="center" >车牌号</th>
+                <th field="CoalType" width="100" align="center" >煤种</th>
+                <th field="RealWeight" width="160" halign="center" align="right" formatter="fmt_ton" >总吨数</th>
+                <th field="StoreCode" width="100" align="center" formatter="fmt_store" >堆场</th>
+			</tr>
+		</thead>
+	</table>
+    <script type="text/javascript">
+        $(function () {
+            $('#dgrid').formgrid({
+                loader: function (param, success, error) {
+                    var ps = {
+                        start: $('#start').datebox('getValue'),
+                        end: $('#end').datebox('getValue'),
+                        Locality: $('#Locality').val(),
+                        CoalType: $('#CoalType').val()
+                    };
+                    new CheckService().SumCheckIn(ps, success, error);
+                },
+
+                groupField: 'StoreCode',
+                view: groupview,
+                groupFormatter: function (value, rows) {
+                    var w = 0;
+                    $(rows).each(function (k, v) {
+                        w += v.RealWeight;
+                    });
+                    value = value ? value : '未入库';
+                    return '<a class="btn-group"><strong>' + value + '</strong> - 进煤：<b>' + w + '</b> 吨。</a>';
+                }
+            });
+        });
+        function fmt_store(val) {
+            return val ? val : '未入库';
+        }
+        function fmt_ton(val) {
+            return val + ' 吨';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>天脊数字化煤场管理系统</title>
+
+    <meta content="text/html; charset=utf-8" />
+    <link href="res/themes/default/easyui.css" rel="stylesheet" type="text/css" />
+    <link href="res/themes/icon.css" rel="stylesheet" type="text/css" />
+    <script src="res/js/jquery.min.js" type="text/javascript"></script>
+    <script src="res/js/jquery.easyui.min.js" type="text/javascript"></script>
+    <script src="res/js/easyui-lang-zh_CN.js" type="text/javascript"></script>
+
+    <script src="res/js/Configuration.js" type="text/javascript"></script>
+    <script src="res/js/Admin.js" type="text/javascript"></script>
+    <style type="text/css">
+        .menu_button { width:100%; text-align:left; padding-left:5px; }
+        .tab_frame { width:100%; height:100%; border:0px; }
+        .bottom_region{ text-align:center; vertical-align:middle; padding:5px; border-bottom:0px; border-left:0px; border-right:0px; }
+    </style>
+
+</head>
+<body class="easyui-layout">
+    <div data-options="region:'north', border:true" style="height:50px; border-left-width:0px; border-top-width:0px; border-right-width:0px; overflow:hidden;">
+        <div style="float:right; padding-right:30px;">
+            <br />
+            欢迎使用天脊数字化煤场管理系统
+            &nbsp;&nbsp;
+            [<a href="javascript:void(0);" onclick="btn_logout();">注销</a>]
+        </div>
+        <div>
+            <img src="res/img/logo.png" alt="TSAdmin" />
+        </div>
+    </div>
+    <div data-options="region:'west', split:true, noheader:true, width:130, maxWidth:200" >
+        <div class="easyui-accordion" data-options="fit:true, border:false">
+            <div title="　第一车间" iconCls="icon-menu" style="overflow:hidden;">
+                <a id="btn_CheckIn" href="javascript:void(0);" class="easyui-linkbutton menu_button" data-options="plain:true, iconCls:'icon-sign'" onclick="on_menu(this);"
+                    title="">进煤登记</a>
+                <a id="btn_CheckOut" href="javascript:void(0);" class="easyui-linkbutton menu_button" data-options="plain:true, iconCls:'icon-beaker'" onclick="on_menu(this);"
+                    title="">检测检验</a>
+                <a id="btn_ChunkTransfer" href="javascript:void(0);" class="easyui-linkbutton menu_button" data-options="plain:true, iconCls:'icon-reload'" onclick="on_menu(this);"
+                    title="">堆场返煤</a>
+                <a id="btn_ConsumeSend" href="javascript:void(0);" class="easyui-linkbutton menu_button" data-options="plain:true, iconCls:'icon-lorry'" onclick="on_menu(this);"
+                    title="">发煤管理</a>
+                <a id="btn_CheckSum" href="javascript:void(0);" class="easyui-linkbutton menu_button" data-options="plain:true, iconCls:'icon-sum'" onclick="on_menu(this);"
+                    title="进煤统计">一车间数据统计</a>
+                <a id="btn_CountStore" href="javascript:void(0);" class="easyui-linkbutton menu_button" data-options="plain:true, iconCls:'icon-sum'" onclick="on_menu(this);"
+                    title="存煤统计">库存管理</a>
+            </div>
+            <div title="　第二车间" iconCls="icon-menu" style="overflow:hidden;">
+                <a id="btn_ConsumeBoil" href="javascript:void(0);" class="easyui-linkbutton menu_button" data-options="plain:true, iconCls:'icon-flame'" onclick="on_menu(this);"
+                    title="">锅炉上煤</a>
+                <a id="btn_ConsumeSteam" href="javascript:void(0);" class="easyui-linkbutton menu_button" data-options="plain:true, iconCls:'icon-flame'" onclick="on_menu(this);"
+                    title="">气化炉上煤</a>
+                <a id="btn_ConsumeRecord" href="javascript:void(0);" class="easyui-linkbutton menu_button" data-options="plain:true, iconCls:'icon-calendar'" onclick="on_menu(this);"
+                    title="燃烧记录">生产数据填报</a>
+                <a id="btn_ChunkSelect" href="javascript:void(0);" class="easyui-linkbutton menu_button" data-options="plain:true, iconCls:'icon-reload'" onclick="on_menu(this);"
+                    title="筛块过磅">粉煤筛块数据</a>
+                <a id="btn_ChunkBig" href="javascript:void(0);" class="easyui-linkbutton menu_button" data-options="plain:true, iconCls:'icon-reload'" onclick="on_menu(this);"
+                    title="大块分拣">B101卸煤数据</a>
+                <a id="btn_ChunkBreak" href="javascript:void(0);" class="easyui-linkbutton menu_button" data-options="plain:true, iconCls:'icon-reload'" onclick="on_menu(this);"
+                    title="破碎过磅">破碎筛块数据</a>
+                <a id="btn_ConsumeSum" href="javascript:void(0);" class="easyui-linkbutton menu_button" data-options="plain:true, iconCls:'icon-sum'" onclick="on_menu(this);"
+                    title="用煤统计">二车间数据统计</a>
+            </div>
+            <!--
+            <div title="　库存管理" iconCls="icon-menu" style="overflow:hidden;">
+            </div>
+            <div title="　统计分析" iconCls="icon-menu" style="overflow:hidden;">
+                <a id="btn_StatAll" href="javascript:void(0);" class="easyui-linkbutton menu_button" data-options="plain:true, iconCls:'icon-chart'" onclick="on_menu(this);" 
+                    title="">逐天统计</a>
+            </div>
+            -->
+            <div title="　系统设置" iconCls="icon-menu" style="overflow:hidden;">
+                <a id="btn_CfgStorage" href="javascript:void(0);" class="easyui-linkbutton menu_button" data-options="plain:true, iconCls:'icon-computer'" onclick="on_menu(this);" 
+                    title="">堆场设置</a>
+                <a id="btn_CfgBalance" href="javascript:void(0);" class="easyui-linkbutton menu_button" data-options="plain:true, iconCls:'icon-balance'" onclick="on_menu(this);" 
+                    title="">地磅设置</a>
+                <a id="btn_Parameters" href="javascript:void(0);" class="easyui-linkbutton menu_button" data-options="plain:true, iconCls:'icon-config'" onclick="on_menu(this);" 
+                    title="">系统参数</a>
+                <a id="btn_License" href="javascript:void(0);" class="easyui-linkbutton menu_button" data-options="plain:true, iconCls:'icon-license'" onclick="on_menu(this);"
+                    title="">授权管理</a>
+                <a id="btn_Password" href="javascript:void(0);" class="easyui-linkbutton menu_button" data-options="plain:true, iconCls:'icon-key'" onclick="on_menu(this);"
+                    title="">修改密码</a>
+            </div>
+        </div>
+    </div>
+    <div data-options="region:'center',iconCls:'icon-ok'" title="">
+        <div id="tabs" class="easyui-tabs" data-options="fit:true, border:false, plain:true, showHeader:false" style="padding-top:5px;">
+            <div title="" data-options="closable:false, iconCls:'icon-info'" >
+                <iframe src="Welcome.htm" scrolling="auto" frameborder="0" class="tab_frame"></iframe>
+            </div>
+        </div>
+    </div>
+    <div data-options="region:'south'" class="bottom_region">
+        Copyright <font face="Verdana">©</font> 2013 <a href="http://www.ultragis.com" target="_blank">www.ultragis.com</a>. All rights reserved
+    </div>
+
+    <script type="text/javascript">
+        function on_menu(m) {
+            var id = m.id.replace('btn_', '');
+            var options = {
+                id: id,
+                title: m.text,
+                icon: $(m).linkbutton('options').iconCls,
+                page: id + '.htm'
+            };
+            open_page(options);
+        }
+        function open_page(ps) {
+            if (!select_tab('#' + ps.id)) {
+                $('#tabs').tabs('add', {
+                    id: ps.id,
+                    title: ps.title,
+                    iconCls: ps.icon,
+                    content: '<iframe src="' + ps.page + '" class="tab_frame"></iframe>',
+                    closable: true
+                });
+            }
+            $('#tabs iframe').parent().css('overflow', 'hidden');
+        }
+        $('body').bind('onOpenPage', function (e, ps) {
+            open_page(ps);
+        });
+        function select_tab(selector) {
+            var tab = $(selector);
+            if (tab.length > 0) {
+                var idx = $('#tabs').tabs('getTabIndex', tab);
+                $('#tabs').tabs('select', idx);
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        function btn_logout() {
+            new Admin().Logout({}, function () {
+                window.location.href = 'login.htm';
+            });
+        }
+    </script>
+</body>
+</html>

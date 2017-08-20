@@ -1,0 +1,127 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta content="text/html; charset=utf-8" />
+    <link href="res/themes/default/easyui.css" rel="stylesheet" type="text/css" />
+    <link href="res/themes/icon.css" rel="stylesheet" type="text/css" />
+    <script src="res/js/jquery.min.js" type="text/javascript"></script>
+    <script src="res/js/jquery.easyui.min.js" type="text/javascript"></script>
+    <script src="res/js/easyui-lang-zh_CN.js" type="text/javascript"></script>
+    <script src="res/js/jquery.formgrid.js" type="text/javascript"></script>
+
+    <script src="res/js/StoreService.js" type="text/javascript"></script>
+    <script src="res/js/common.js" type="text/javascript"></script>
+    <style type="text/css">
+        .grid_body{ border-top-width:0px; }
+    </style>
+</head>
+<body>
+    <div id="toolbar" style="padding:5px;height:auto;">
+        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" onclick="$('#dgrid').formgrid('addRow');">添加</a>
+        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-edit" onclick="$('#dgrid').formgrid('editRow');">编辑</a>
+        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" onclick="$('#dgrid').formgrid('destroyRow');">删除</a>
+        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-save" onclick="$('#dgrid').formgrid('saveRow');">保存</a>
+        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-undo" onclick="$('#dgrid').formgrid('cancelRow');">取消</a>
+        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-refresh" onclick="$('#dgrid').formgrid('reload');">刷新</a>
+	</div>
+	<table id="dgrid" title="">
+		<thead>
+			<tr>
+                <th field="Group" width="120" align="center"
+                    editor="{type:'dropdown',options:{required:true, items:'一车间一班组,一车间二班组,一车间三班组'}}" >当班班组</th>
+                <th field="MoveTime" width="160" align="center"
+                    editor="{type:'datetime',options:{required:true}}" >操作时间</th>
+                <th field="StoreCode" width="120" align="center"
+                    editor="{type:'dropdown',options:{required:true, items:'北堆场', value:'北堆场'}}" >来源堆场</th>
+                <th field="CoalType" width="80" align="center"
+                    editor="{type:'dropdown',options:{required:true, items:'块煤,粉煤'}}" >煤种</th>
+                <th field="Locality" width="80" align="center" editor="text" >产地</th>
+		        <th field="Amount" width="120" align="right" halign="center"
+                    editor="{type:'numberbox',options:{required:true, precision:3}}" >数量</th>
+		        <th field="DestStore" width="120" align="center"
+                    editor="{type:'dropdown',options:{required:true, items:'B105,B118,B118A'}}">卸车地点</th>
+                <!--<th field="BalanceCode" width="120" align="center"
+                    editor="{type:'dropdown',options:{required:true, items:'W1003', value:'W1003'}}" >地磅</th>-->
+			</tr>
+		</thead>
+	</table>
+
+    <script type="text/javascript">
+        $(function () {
+            var svc = new StoreService();
+            var obj = { MoveType: 'Transfer'};
+            $('#dgrid').formgrid({
+                url: svc.ListMove({ type: 'Transfer' }),
+                insertUrl: svc.SetMove(obj),
+                updateUrl: svc.SetMove(obj),
+                destroyUrl: svc.RemoveMove()
+            });
+        });
+    </script>
+
+    <script type="text/javascript">
+        $.extend($.fn.datagrid.defaults.editors, {
+            program: {
+                init: function (container, options) {
+                    var filter = function (data) {
+                        $(data).each(function (k, v) {
+                            v.id = escape(v.Path);
+                            v.text = v.Path;
+                            v.state = v.IsProgram ? 'opened' : 'closed';
+                            if (v.Path.length <= 3)
+                                v.iconCls = 'icon-save';
+                            if (v.IsProgram)
+                                v.iconCls = 'icon-ok';
+                        });
+                        return data;
+                    };
+                    var input = $('<ul></ul>').appendTo(container);
+                    setTimeout(function () {
+                        var current = null;
+                        $(input).combotree($.extend({}, options, {
+                            panelHeight: 500,
+                            url: new Configuration().ListProgram(),
+                            loadFilter: filter,
+                            formatter: function (val) {
+                                return val.Name;
+                            },
+                            onBeforeSelect: function (node) {
+                                current = node;
+                                var path = unescape(node.id);
+                                var ext = path.substring(path.length - 4).toLowerCase();
+                                return (ext == '.exe');
+                            }//,
+//                            onHidePanel: function () {
+//                                var node = $(this).combotree('tree').tree('getSelected');
+//                                node = (node == current) ? node : current;
+//                                var path = node ? unescape(node.id) : null;
+//                                var ext = path ? path.substring(path.length - 4).toLowerCase() : null;
+//                                if (ext != '.exe')
+//                                    $(this).combotree('showPanel');
+//                            },
+//                            onDblClick: function (node) {
+//                                $(this).tree('toggle', node.target);
+//                            }
+                        }));
+                    }, 0);
+                    return input;
+                },
+                destroy: function (target) {
+                    $(target).remove();
+                },
+                getValue: function (target) {
+                    return $(target).combotree('getText');
+                },
+                setValue: function (target, value) {
+                    $(target).val(value);
+                },
+                resize: function (target, width) {
+                    $(target)._outerWidth(width);
+                }
+            }
+        });
+    </script>
+    
+</body>
+</html>

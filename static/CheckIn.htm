@@ -1,0 +1,103 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta content="text/html; charset=utf-8" />
+    <link href="res/themes/default/easyui.css" rel="stylesheet" type="text/css" />
+    <link href="res/themes/icon.css" rel="stylesheet" type="text/css" />
+    <script src="res/js/jquery.min.js" type="text/javascript"></script>
+    <script src="res/js/jquery.easyui.min.js" type="text/javascript"></script>
+    <script src="res/js/easyui-lang-zh_CN.js" type="text/javascript"></script>
+    <script src="res/js/jquery.formgrid.js" type="text/javascript"></script>
+
+    <script src="res/js/CheckService.js" type="text/javascript"></script>
+    <script src="res/js/Configuration.js" type="text/javascript"></script>
+    <script src="res/js/common.js" type="text/javascript"></script>
+    <style type="text/css">
+        .grid_body{ border-top-width:0px; }
+    </style>
+</head>
+<body>
+    <div id="toolbar" style="padding:5px;height:auto;">
+        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" onclick="$('#dgrid').formgrid('addRow');">添加</a>
+        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-edit" onclick="$('#dgrid').formgrid('editRow');">编辑</a>
+        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" onclick="$('#dgrid').formgrid('destroyRow');">删除</a>
+        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-save" onclick="$('#dgrid').formgrid('saveRow');">保存</a>
+        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-undo" onclick="$('#dgrid').formgrid('cancelRow');">取消</a>
+        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-refresh" onclick="$('#dgrid').formgrid('reload');">刷新</a>
+        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-print" onclick="alert('打印登记表');">打印</a>
+	</div>
+	<table id="dgrid" title="">
+		<thead>
+			<tr>
+                <th field="Group" width="120" align="center"
+                    editor="{type:'dropdown',options:{required:true, items:'一车间一班组,一车间二班组,一车间三班组'}}" >当班班组</th>
+                <th field="Name" width="120" align="center"
+                    editor="{type:'validatebox',options:{required:true}}" >票据号</th>
+                <th field="BookTime" width="140" align="center"
+                    editor="{type:'datetime',options:{required:true}}" >登记时间</th>
+                <th field="Locality" width="80" align="center" editor="text" >产地</th>
+                <th field="CarCode" width="120" align="center" editor="text" >车牌号</th>
+
+                <th field="CoalType" width="80" align="center"
+                    editor="{type:'dropdown',options:{required:true, items:'块煤,粉煤'}}" >煤种</th>
+
+                <th field="TypeDesc" width="80" align="center" editor="text" >煤种说明</th>
+
+                <th field="BookWeight" width="80" align="right" halign="center"
+                    editor="{type:'numberbox',options:{required:true}}"
+                    formatter="fmt_ton" title="登记重量" >矿发量</th>
+
+                <th field="RealWeight" width="80" align="right" halign="center"
+                    editor="{type:'numberbox',options:{required:true}}"
+                    formatter="fmt_ton" title="实测重量" >复秤量</th>
+
+                <th field="Difference" width="80" align="right" halign="center" formatter="fmt_diff" >误差重量</th>
+                <th field="LeaveTime" width="140" align="center" editor="{type:'datetime',options:{required:true}}" >离场时间</th>
+
+                <!--<th field="Deviation" width="80" align="right" halign="center" formatter="fmt_percent" >误差</th>-->
+		        <!--<th field="DriverName" width="80" align="center" editor="text" >司机</th>-->
+                <!--<th field="BlackCount" width="80" align="center" editor="text" formatter="fmt_black" >黑名单</th>-->
+                <!--<th field="CarType" width="80" align="center" editor="{type:'dropdown',options:{required:true, items:'汽车,火车'}}" >车型</th>-->
+                <!--<th field="SegCount" width="60" align="right" halign="center" editor="{type:'numberbox'}" >节数</th>-->
+			</tr>
+		</thead>
+	</table>
+    <script type="text/javascript">
+        $(function () {
+            var svc = new CheckService();
+            $('#dgrid').formgrid({
+                url: svc.ListCheckIn(),
+                insertUrl: svc.SetCheckIn(),
+                updateUrl: svc.SetCheckIn(),
+                destroyUrl: svc.RemoveCheckIn()
+            });
+        });
+        function fmt_black(val) {
+            return val + ' 次';
+        }
+        function fmt_ton(val) {
+            return val + ' 吨';
+        }
+        function fmt_diff(val) {
+            if (val) {
+                return (val > 0 ? '+' : '') + val.toFixed(3) + ' 吨';
+            } else {
+                return val;
+            }
+        }
+        function fmt_percent(val) {
+            if (val) {
+                var v = (val * 100).toFixed(2);
+                return (v > 0 ? '+' : '') + v + ' %';
+            }
+            else {
+                return val;
+            }
+        }
+    </script>
+    <script type="text/javascript">
+        
+    </script>
+</body>
+</html>
