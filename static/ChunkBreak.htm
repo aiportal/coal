@@ -33,7 +33,8 @@
                 <th field="MoveTime" width="160" align="center" editor="{type:'datetime',options:{required:true}}" >操作时间</th>
                 <th field="StoreCode" width="120" align="center" editor="{type:'dropdown',options:{required:true, items:'B101,B105|2#'}}" >来源堆场</th>
                 <th field="BalanceCode" width="120" align="center" editor="{type:'dropdown',options:{required:true, items:'W1003', value:'W1003'}}" >地磅</th>
-		        <th field="Amount" width="120" align="right" halign="center" editor="{type:'numberbox',options:{required:true, precision:3}}" >数量</th>
+		        <th field="Amount" width="120" align="right" halign="center" formatter="fmt_ton"
+                    editor="{type:'numberbox',options:{required:true, precision:3}}" >数量</th>
 		        <th field="DestStore" width="120" align="center" editor="{type:'dropdown',options:{required:true, items:'B109', value:'B109'}}">目的仓储</th>
 			</tr>
 		</thead>
@@ -50,6 +51,9 @@
                 destroyUrl: svc.RemoveMove()
             });
         });
+        function fmt_ton(v) {
+            return ($.isNumeric(v) ? parseFloat(v).toFixed(3) : v) + ' 吨';
+        }
     </script>
 </body>
 </html>

@@ -1,5 +1,6 @@
 import peewee
 from playhouse.signals import pre_save
+from playhouse.hybrid import hybrid_property
 from .database import MainModel
 import uuid
 from datetime import datetime
@@ -18,12 +19,11 @@ class ConsumeSend(MainModel):
     Amount = peewee.FloatField(help_text='数量')
     CoalType = peewee.CharField(help_text='煤种')
     Destination = peewee.CharField(null=True, help_text='收货单位')
-    # Timestamp = peewee.DateTimeField(help_text='时间戳')
 
 
 @pre_save(sender=ConsumeSend)
 def consume_send_name(sender, instance, created):
-    r = instance    # type:ConsumeSend
+    r = instance                                                    # type:ConsumeSend
     if created:
         r.Name = str(uuid.uuid1()).replace('-', '').lower()
 
@@ -41,18 +41,20 @@ class ConsumeFire(MainModel):
     ConsumeTime = peewee.DateTimeField(help_text='发煤时间')
     ConsumeType = peewee.CharField(help_text='发煤类型')
     StoreCode = peewee.CharField(help_text='堆场')
-    BalanceCode = peewee.CharField(help_text='地磅')
-    Amount = peewee.FloatField(help_text='加料数量')
     OutBalance = peewee.CharField(help_text='出库电子秤')
     OutAmount = peewee.FloatField(help_text='出库计量数')
     InBalance = peewee.CharField(help_text='入炉电子秤')
     InAmount = peewee.FloatField(help_text='入炉计量数')
     BufferCode = peewee.CharField(help_text='锅炉')
 
+    BalanceCode = peewee.CharField(default='', help_text='地磅')
+    Amount = peewee.FloatField(help_text='加料数量')
+
 
 @pre_save(sender=ConsumeFire)
 def consume_fire_name(sender, instance, created):
-    r = instance    # type:ConsumeFire
+    r = instance                                                # type:ConsumeFire
+    r.Amount = r.OutAmount
     if created:
         r.Name = str(uuid.uuid1()).replace('-', '').lower()
 

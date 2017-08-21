@@ -39,8 +39,8 @@
                     editor="{type:'dropdown',options:{required:true, items:'W1004A,W1004B'}}" >地磅</th>-->
                 <th field="CoalType" width="80" align="center"
                     editor="{type:'dropdown',options:{required:true, items:'块煤,粉煤'}}" >煤种</th>
-                <th field="Amount" width="80" align="right" halign="center"
-                    editor="{type:'numberbox',options:{required:true}}" >发煤数量</th>
+                <th field="Amount" width="80" align="right" halign="center" formatter="fmt_ton"
+                    editor="{type:'numberbox',options:{required:true, precision:3}}" >发煤数量</th>
 			</tr>
 		</thead>
 	</table>
@@ -55,6 +55,9 @@
                 destroyUrl: svc.RemoveSendOut()
             });
         });
+        function fmt_ton(v) {
+            return ($.isNumeric(v) ? parseFloat(v).toFixed(3) : v) + ' 吨';
+        }
     </script>
     
 </body>

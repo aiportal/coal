@@ -23,6 +23,7 @@
 		到: <input id="end" style="width:140px" class="easyui-datetimebox" showSeconds="false" required />
         产地: <input id="Locality" style="width:80px" class="easyui-validatebox" />
         煤种: <input id="CoalType" style="width:80px;" class="easyui-validatebox" />
+        卸车场地: <input id="StoreCode" style="width:80px;" class="easyui-validatebox" />
         <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-sum" onclick="$('#dgrid').datagrid('reload');">统计</a>
         <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-collapse" onclick="$('#dgrid').datagrid('collapseGroup');"></a>
         <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-expand" onclick="$('#dgrid').datagrid('expandGroup');"></a>
@@ -47,7 +48,8 @@
                         start: $('#start').datebox('getValue'),
                         end: $('#end').datebox('getValue'),
                         Locality: $('#Locality').val(),
-                        CoalType: $('#CoalType').val()
+                        CoalType: $('#CoalType').val(),
+                        StoreCode: $('#StoreCode').val()
                     };
                     new CheckService().SumCheckIn(ps, success, error);
                 },
@@ -60,15 +62,15 @@
                         w += v.RealWeight;
                     });
                     value = value ? value : '未入库';
-                    return '<a class="btn-group"><strong>' + value + '</strong> - 进煤：<b>' + w + '</b> 吨。</a>';
+                    return '<a class="btn-group"><strong>' + value + '</strong> - 进煤：<b>' + w.toFixed(3) + '</b> 吨。</a>';
                 }
             });
         });
         function fmt_store(val) {
             return val ? val : '未入库';
         }
-        function fmt_ton(val) {
-            return val + ' 吨';
+        function fmt_ton(v) {
+            return ($.isNumeric(v) ? parseFloat(v).toFixed(3) : v) + ' 吨';
         }
     </script>
 </body>

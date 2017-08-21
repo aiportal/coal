@@ -60,7 +60,7 @@
                     $(rows).each(function (k, v) {
                         w += v.Amount;
                     });
-                    return '<a class="btn-group"><strong>' + value + '</strong> - 用煤：<b>' + w + '</b> 吨。</a>';
+                    return '<a class="btn-group"><strong>' + value + '</strong> - 用煤：<b>' + w.toFixed(3) + '</b> 吨。</a>';
                 }
             });
         });
@@ -75,8 +75,8 @@
                 default: return val;
             }
         }
-        function fmt_ton(val) {
-            return val + ' 吨';
+        function fmt_ton(v) {
+            return ($.isNumeric(v) ? parseFloat(v).toFixed(3) : v) + ' 吨';
         }
     </script>
 </body>

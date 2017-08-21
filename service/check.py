@@ -1,5 +1,6 @@
 from flask import request
 from flask.views import View
+from playhouse.shortcuts import model_to_dict
 from database import db_main
 from database.check import CheckIn, CheckOut
 from database.store import Storage
@@ -22,7 +23,10 @@ class CheckService(View):
     def ListCheckIn():
         start = datetime.now() - timedelta(days=1)
         q = CheckIn.select().where(CheckIn.TimeStamp > start)
-        js = '[' + ','.join([str(r) for r in q]) + ']'
+        js = json.dumps({
+            'total': 200,
+            'rows': [model_to_dict(x) for x in q]
+        }, ensure_ascii=False)
         return js
 
     @classmethod
@@ -38,11 +42,22 @@ class CheckService(View):
 
     @staticmethod
     def check_book_code():  # 检查表单编号是否存在
-        if 'ID' in request.form and request.form['ID']:
+        if request.form.get('ID'):
             return
-        q = CheckIn.select().where(CheckIn.Name == request.form['Name'])
+        name = request.form.get('Name')
+        q = CheckIn.select().where(CheckIn.Name == name)
         if q.exists():
             raise Exception('表单编号已存在')
+
+    @staticmethod
+    def check_book_time():
+        min_time = datetime.now() - timedelta(hours=12)
+        max_time = datetime.now() + timedelta(hours=1)
+        t = request.form.get('BookTime')
+        tm = datetime.strptime(t, '%Y-%m-%d %H:%M')
+        if min_time < tm < max_time:
+            return
+        raise Exception('登记时间应在12小时以内')
 
     @staticmethod
     def RemoveCheckIn():
@@ -82,7 +97,7 @@ class CheckService(View):
     def SumCheckIn():
         args = request.args
         start, end = args.get('start'), args.get('end')
-        Locality, CoalType = args.get('Locality'), args.get('CoalType')
+        Locality, CoalType, StoreCode = args.get('Locality'), args.get('CoalType'), args.get('StoreCode')
         if not start or not end:
             return '[]'
         q = CheckIn.select(CheckIn.Name, CheckIn.Locality, CheckIn.CarCode,
@@ -92,4 +107,6 @@ class CheckService(View):
             q = q.where(CheckIn.Locality.contains(Locality))
         if CoalType:
             q = q.where(CheckIn.CoalType.contains(CoalType))
+        if StoreCode:
+            q = q.where(CheckIn.StoreCode.contains(StoreCode))
         return '[' + ','.join([str(r) for r in q]) + ']'

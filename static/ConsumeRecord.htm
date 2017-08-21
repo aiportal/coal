@@ -32,8 +32,10 @@
                     editor="{type:'dropdown',options:{required:true, items:'二车间一班组,二车间二班组,二车间三班组,二车间四班组'}}" >当班班组</th>
                 <th field="StartTime" width="160" align="center" editor="{type:'datetime',options:{required:true}}" >起始时间</th>
                 <th field="EndTime" width="100" align="center" editor="{type:'time',options:{required:true}}" >结束时间</th>
-                <th field="RecordType" width="180" align="center" editor="{type:'dropdown',options:{required:true, items:'用电总量(度),上煤量(吨),吨煤用电(度),块中含粉量(%),块中含矸量(%)'}}" >记录项目</th>
-                <th field="Amount" width="80" align="center" editor="{type:'numberbox',options:{required:true}}" >数值</th>
+                <th field="RecordType" width="180" align="center"
+                    editor="{type:'dropdown',options:{required:true, items:'用电总量(度),粉煤筛块(吨),上煤量(吨),吨煤用电(度),块中含粉量(%),块中含矸量(%)'}}" >记录项目</th>
+                <th field="Amount" width="120" align="center" formatter="fmt_ton"
+                    editor="{type:'numberbox',options:{required:true, precision:3}}" >数值</th>
 			</tr>
 		</thead>
 	</table>
@@ -47,6 +49,9 @@
                 destroyUrl: svc.RemoveRecord()
             });
         });
+        function fmt_ton(v) {
+            return ($.isNumeric(v) ? parseFloat(v).toFixed(3) : v) + ' 吨';
+        }
     </script>
 </body>
 </html>

@@ -37,7 +37,7 @@
                 <th field="CoalType" width="80" align="center"
                     editor="{type:'dropdown',options:{required:true, items:'块煤,粉煤'}}" >煤种</th>
                 <th field="Locality" width="80" align="center" editor="text" >产地</th>
-		        <th field="Amount" width="120" align="right" halign="center"
+		        <th field="Amount" width="120" align="right" halign="center" formatter="fmt_ton"
                     editor="{type:'numberbox',options:{required:true, precision:3}}" >数量</th>
 		        <th field="DestStore" width="120" align="center"
                     editor="{type:'dropdown',options:{required:true, items:'B105,B118,B118A'}}">卸车地点</th>
@@ -58,6 +58,9 @@
                 destroyUrl: svc.RemoveMove()
             });
         });
+        function fmt_ton(v) {
+            return ($.isNumeric(v) ? parseFloat(v).toFixed(3) : v) + ' 吨';
+        }
     </script>
 
     <script type="text/javascript">

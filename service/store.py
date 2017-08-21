@@ -49,7 +49,7 @@ class StoreService(View):
         rid = request.form['id']
         r = StoreMove.get(ID=rid)                                   # type:StoreMove
         with db_main.atomic():
-            r.delete()
+            r.delete().execute()
             Storage.MoveStorage(r.DestStore, r.StoreCode, float(r.Amount))                  # 恢复库存
         return 'true'
 

@@ -33,7 +33,7 @@ class ConsumeService(View):
             if r_old:
                 Storage.AddStorage(r_old.StoreCode, float(r_old.Amount))        # 恢复库存
             Storage.SubStorage(r.StoreCode, float(r.Amount))                    # 减库存
-        r = ConsumeSend.get(ID=r.ID)
+        r = ConsumeSend.get(Name=r.Name)
         return str(r)
 
     @staticmethod
@@ -42,7 +42,7 @@ class ConsumeService(View):
         r = ConsumeSend.get(ID=rid)                         # type:ConsumeSend
         with db_main.atomic():
             Storage.AddStorage(r.StoreCode, float(r.Amount))                    # 恢复库存
-            r.delete()
+            r.delete().execute()
         return 'true'
 
     @staticmethod
@@ -72,7 +72,7 @@ class ConsumeService(View):
         r = ConsumeFire.get(ID=rid)
         with db_main.atomic():
             Storage.AddStorage(r.StoreCode, float(r.Amount))                    # 恢复库存
-            r.delete()
+            r.delete().execute()
         return 'true'
 
     @staticmethod
