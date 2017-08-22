@@ -57,8 +57,8 @@ class CheckOut(MainModel):
 
 
 @pre_save(sender=CheckOut)
-def parse_bool(sender, instance, created):
-    r = instance
+def check_parse_bool(sender, instance, created):
+    r = instance                                                # type: CheckOut
     r.BlackList = str(r.BlackList).lower() == 'true'
     r.WholeSeal = str(r.WholeSeal).lower() == 'true'
     r.WholeHeap = str(r.WholeHeap).lower() == 'true'
@@ -66,20 +66,3 @@ def parse_bool(sender, instance, created):
 
 if not CheckOut.table_exists():
     CheckOut.create_table()
-
-
-class CheckView(MainModel):
-    class Meta:
-        db_table = 'CheckView'
-    ID = peewee.IntegerField(db_column='CheckId', primary_key=True)
-    Name = peewee.CharField(db_column='BookCode', unique=True, help_text='票据号')
-    BookTime = peewee.DateTimeField(index=True, help_text='登记时间')
-    CoalType = peewee.CharField(help_text='煤种')
-    RealWeight = peewee.FloatField(help_text='复秤量/实测重量')
-    StoreCode = peewee.CharField(help_text='卸车场地', null=True)
-
-if not CheckView.table_exists():
-    cols = ['A.CheckId', 'A.BookCode', 'A.BookTime', 'A.CoalType', 'A.RealWeight', 'B.StoreCode']
-    sql = 'create view CheckView as select ' + ','.join(cols) + ' ' +\
-          'from CheckIn A join CheckOut B on A.BookCode=B.BookCode'
-    db_main.execute_sql('')

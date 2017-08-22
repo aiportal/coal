@@ -24,6 +24,7 @@
         <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-save" onclick="$('#dgrid').formgrid('saveRow');">保存</a>
         <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-undo" onclick="$('#dgrid').formgrid('cancelRow');">取消</a>
         <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-refresh" onclick="$('#dgrid').formgrid('reload');">刷新</a>
+        <a href="ConsumeSteam_Query.htm" class="easyui-linkbutton" iconCls="icon-search" title="查询历史记录" >查询</a>
 	</div>
 	<table id="dgrid" title="">
 		<thead>
@@ -42,12 +43,6 @@
                     editor="{type:'dropdown',options:{required:true, items:'W1001A,W1001B,W1002,WIQ16101'}}" >入炉电子秤</th>
 		        <th field="InAmount" width="100" align="right" halign="center" formatter="fmt_ton"
                     editor="{type:'numberbox',options:{required:true, precision:3}}" >入炉计量数</th>
-                <!--
-                <th field="BalanceCode" width="100" align="center"
-                    editor="{type:'dropdown',options:{required:true, items:'W1001A,W1001B,W1002,WIQ16101'}}" >地磅</th>
-		        <th field="Amount" width="80" align="right" halign="center"
-                    editor="{type:'numberbox',options:{required:true}}" >加料数量</th>
-                -->
 		        <th field="BufferCode" width="120" halign="center"
                     editor="{type:'boiler',options:{required:true}}">汽化炉</th>
 			</tr>
@@ -59,14 +54,12 @@
             var svc = new ConsumeService();
             $('#dgrid').formgrid({
                 url: svc.ListFireIn({type:'Steam'}),
-                insertUrl: svc.SetFireIn({type:'Steam'}),
-                updateUrl: svc.SetFireIn({type:'Steam'}),
-                destroyUrl: svc.RemoveFireIn()
+                insertUrl: svc.SetFireIn({MoveType:'Steam'}),
+                updateUrl: svc.SetFireIn({MoveType:'Steam'}),
+                destroyUrl: svc.RemoveFireIn(),
+                pagination: true
             });
         });
-        function fmt_ton(v) {
-            return ($.isNumeric(v) ? parseFloat(v).toFixed(3) : v) + ' 吨';
-        }
     </script>
 
     <script type="text/javascript">

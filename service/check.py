@@ -8,6 +8,9 @@ import json
 from datetime import datetime, timedelta
 
 
+DATETIME_FMT = '%Y-%m-%d %H:%M'
+
+
 class CheckService(View):
     methods = ['GET', 'POST']
 
@@ -21,10 +24,29 @@ class CheckService(View):
 
     @staticmethod
     def ListCheckIn():
-        start = datetime.now() - timedelta(days=1)
-        q = CheckIn.select().where(CheckIn.TimeStamp > start)
+        view_all = request.args.get('view') == 'all'
+        q = CheckIn.select().order_by(-CheckIn.BookTime)
+        if not view_all:
+            # 编辑页面只显示24小时内的信息
+            start = datetime.now() - timedelta(days=1)
+            q = q.where(CheckIn.TimeStamp > start)
+
+        page, rows = request.form.get('page') or 1, request.form.get('rows') or 50
+        q = q.paginate(int(page), int(rows))
+
+        args = request.args
+        start, end = args.get('start'), args.get('end')
+        if start:
+            q = q.where(CheckIn.BookTime > datetime.strptime(start, DATETIME_FMT))
+        if end:
+            q = q.where(CheckIn.BookTime < datetime.strptime(end, DATETIME_FMT))
+
+        Name = args.get('Name')
+        if Name:
+            q = q.where(CheckIn.Name.contains(Name))
+
         js = json.dumps({
-            'total': 200,
+            'total': q.count(True),
             'rows': [model_to_dict(x) for x in q]
         }, ensure_ascii=False)
         return js
@@ -32,6 +54,7 @@ class CheckService(View):
     @classmethod
     def SetCheckIn(cls):
         cls.check_book_code()
+        cls.check_book_time()
         r1 = CheckIn.new(request.form)
         r2 = CheckOut.new(request.form)
         with db_main.atomic():
@@ -53,9 +76,13 @@ class CheckService(View):
     def check_book_time():
         min_time = datetime.now() - timedelta(hours=12)
         max_time = datetime.now() + timedelta(hours=1)
-        t = request.form.get('BookTime')
-        tm = datetime.strptime(t, '%Y-%m-%d %H:%M')
-        if min_time < tm < max_time:
+        book_time = request.form.get('BookTime')
+        book_time = datetime.strptime(book_time, DATETIME_FMT)
+        leave_time = request.form.get('LeaveTime')
+        leave_time = datetime.strptime(leave_time, DATETIME_FMT)
+        if leave_time <= book_time:
+            raise Exception('离场时间应晚于登记时间')
+        if min_time < book_time < max_time:
             return
         raise Exception('登记时间应在12小时以内')
 
@@ -73,9 +100,35 @@ class CheckService(View):
 
     @staticmethod
     def ListCheckOut():
-        start = datetime.now() - timedelta(days=1)
-        q = CheckOut.select().where(CheckOut.TimeStamp > start)
-        return '[' + ','.join([str(r) for r in q]) + ']'
+        view_all = request.args.get('view') == 'all'
+        q = CheckOut.select().order_by(-CheckOut.TimeStamp)
+        if not view_all:
+            start = datetime.now() - timedelta(days=1)
+            q = q.where(CheckOut.TimeStamp > start)
+
+        page, rows = request.form.get('page') or 1, request.form.get('rows') or 50
+        q = q.paginate(int(page), int(rows))
+
+        args = request.args
+        start, end = args.get('start'), args.get('end')
+        if start:
+            q = q.where(CheckOut.TimeStamp > datetime.strptime(start, DATETIME_FMT))
+        if end:
+            q = q.where(CheckOut.TimeStamp < datetime.strptime(end, DATETIME_FMT))
+
+        Name, CarCode, StoreCode = args.get('Name'), args.get('CarCode'), args.get('StoreCode')
+        if Name:
+            q = q.where(CheckOut.Name.contains(Name))
+        if CarCode:
+            q = q.where(CheckOut.CarCode.contains(CarCode))
+        if StoreCode:
+            q = q.where(CheckOut.StoreCode.contains(StoreCode))
+
+        js = json.dumps({
+            'total': q.count(True),
+            'rows': [model_to_dict(x) for x in q]
+        }, ensure_ascii=False)
+        return js
 
     @staticmethod
     def SetCheckOut():
@@ -86,6 +139,7 @@ class CheckService(View):
         r_in = CheckIn.get(Name=r_db.Name)          # type:CheckIn
         r_in.StoreCode = r_form.StoreCode
         with db_main.atomic():
+            r_form.TimeStamp = ('{0:' + DATETIME_FMT + '}').format(datetime.now())
             r_form.save()
             r_in.save()
             Storage.MoveStorage(r_db.StoreCode, r_form.StoreCode, r_db.RealWeight)      # 调整库存

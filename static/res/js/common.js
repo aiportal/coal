@@ -57,6 +57,10 @@ function fmt_password(val) {
     return '********';
 }
 
+function fmt_ton(v) {
+    return ($.isNumeric(v) ? parseFloat(v).toFixed(3) : v) + ' 吨';
+}
+
 function err_apply(err) {
     if (err && err.Exception) {
         $.messager.alert('错误', err.Exception);

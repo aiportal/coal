@@ -19,11 +19,13 @@
 </head>
 <body>
     <div id="toolbar" style="padding:5px;height:auto;">
-        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-edit" onclick="$('#dgrid').formgrid('editRow');">编辑</a>
-        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-save" onclick="$('#dgrid').formgrid('saveRow');">保存</a>
-        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-undo" onclick="$('#dgrid').formgrid('cancelRow');">取消</a>
-        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-refresh" onclick="$('#dgrid').formgrid('reload');">刷新</a>
-        <a href="CheckOut_Query.htm" class="easyui-linkbutton" iconCls="icon-search" title="查询历史记录" >查询</a>
+		检测时间: <input id="start" style="width:140px" class="easyui-datetimebox" showSeconds="false" />
+		到: <input id="end" style="width:140px" class="easyui-datetimebox" showSeconds="false" />
+        票据号: <input id="Name" style="width:80px" class="easyui-validatebox" />
+        车牌号: <input id="CarCode" style="width:80px" class="easyui-validatebox" />
+        卸车场地: <input id="StoreCode" style="width:80px" class="easyui-validatebox" />
+        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" onclick="$('#dgrid').formgrid('reload');">查询</a>
+        <a href="CheckOut.htm" class="easyui-linkbutton" iconCls="icon-edit" title="编辑24小时以内的记录" >编辑</a>
 	</div>
 	<table id="dgrid" title="">
 		<thead>
@@ -32,14 +34,14 @@
 		        <th field="Name" width="80" align="center" >票据号</th>
                 <th field="CarCode" width="100" align="center" >车牌号</th>
                 <th field="CoalType" width="60" align="center" >煤种</th>
-                <th field="StoreCode" width="80" align="center" editor="{type:'dropdown',options:{required:true, items:'B101,B118,B118A,北堆场'}}" >卸车场地</th>
-                <th field="BlackList" width="40" align="center" editor="boolean" formatter="fmt_bool" >黑名单</th>
-                <th field="WholeSeal" width="60" align="center" editor="boolean" formatter="fmt_seal" >封条完好</th>
-                <th field="WholeHeap" width="60" align="center" editor="boolean" formatter="fmt_heap" >堆型完好</th>
-		        <th field="CheckResult" width="180" align="center" formatter="fmt_content" editor="textarea" >检测结果</th>
-		        <th field="ExamResult" width="180" align="center" formatter="fmt_content" editor="textarea" >抽检结果</th>
-                <th field="ViolateRule" width="40" align="center" editor="boolean" formatter="fmt_bool" >违规</th>
-                <th field="ViolateReason" width="180" align="center" formatter="fmt_content" editor="textarea" >违规原因</th>
+                <th field="StoreCode" width="80" align="center" >卸车场地</th>
+                <th field="BlackList" width="40" align="center" formatter="fmt_bool" >黑名单</th>
+                <th field="WholeSeal" width="60" align="center" formatter="fmt_seal" >封条完好</th>
+                <th field="WholeHeap" width="60" align="center" formatter="fmt_heap" >堆型完好</th>
+		        <th field="CheckResult" width="180" align="center" formatter="fmt_content" >检测结果</th>
+		        <th field="ExamResult" width="180" align="center" formatter="fmt_content" >抽检结果</th>
+                <th field="ViolateRule" width="40" align="center" formatter="fmt_bool" >违规</th>
+                <th field="ViolateReason" width="180" align="center" formatter="fmt_content" >违规原因</th>
                 <th field="TimeStamp" width="120" align="center">检测时间</th>
 			</tr>
 		</thead>
@@ -47,12 +49,21 @@
 
     <script type="text/javascript">
         $(function () {
-            var svc = new CheckService();
             $('#dgrid').formgrid({
-                url: svc.ListCheckOut(),
-                insertUrl: svc.SetCheckOut(),
-                updateUrl: svc.SetCheckOut(),
+                loader: function (param, success, error) {
+                    var ps = {
+                        view:'all',
+                        start: $('#start').datebox('getValue'),
+                        end: $('#end').datebox('getValue'),
+                        Name: $('#Name').val(),
+                        CarCode: $('#CarCode').val(),
+                        StoreCode: $('#StoreCode').val()
+                    };
+                    new CheckService().ListCheckOut(ps, success, error);
+                },
                 pagination: true,
+                pageSize: 50,
+                pageList: [50, 100],
                 nowrap:false
             });
         });

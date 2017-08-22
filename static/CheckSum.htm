@@ -19,7 +19,7 @@
 </head>
 <body>
     <div id="toolbar" style="padding:5px;height:auto;">
-		日期: <input id="start" style="width:140px" class="easyui-datetimebox" showSeconds="false" required />
+		登记时间: <input id="start" style="width:140px" class="easyui-datetimebox" showSeconds="false" required />
 		到: <input id="end" style="width:140px" class="easyui-datetimebox" showSeconds="false" required />
         产地: <input id="Locality" style="width:80px" class="easyui-validatebox" />
         煤种: <input id="CoalType" style="width:80px;" class="easyui-validatebox" />
@@ -68,9 +68,6 @@
         });
         function fmt_store(val) {
             return val ? val : '未入库';
-        }
-        function fmt_ton(v) {
-            return ($.isNumeric(v) ? parseFloat(v).toFixed(3) : v) + ' 吨';
         }
     </script>
 </body>

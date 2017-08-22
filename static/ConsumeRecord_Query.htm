@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta content="text/html; charset=utf-8" />
+    <link href="res/themes/default/easyui.css" rel="stylesheet" type="text/css" />
+    <link href="res/themes/icon.css" rel="stylesheet" type="text/css" />
+    <script src="res/js/jquery.min.js" type="text/javascript"></script>
+    <script src="res/js/jquery.easyui.min.js" type="text/javascript"></script>
+    <script src="res/js/easyui-lang-zh_CN.js" type="text/javascript"></script>
+    <script src="res/js/jquery.formgrid.js" type="text/javascript"></script>
+
+    <script src="res/js/ConsumeService.js" type="text/javascript"></script>
+    <script src="res/js/common.js" type="text/javascript"></script>
+    <style type="text/css">
+        .grid_body{ border-top-width:0px; }
+    </style>
+</head>
+<body>
+    <div id="toolbar" style="padding:5px;height:auto;">
+		起始时间: <input id="start" style="width:140px" class="easyui-datetimebox" showSeconds="false" />
+		到: <input id="end" style="width:140px" class="easyui-datetimebox" showSeconds="false" />
+        记录项目: <input id="RecordType" style="width:80px" class="easyui-validatebox" />
+        <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" onclick="$('#dgrid').formgrid('reload');">刷新</a>
+        <a href="ConsumeRecord.htm" class="easyui-linkbutton" iconCls="icon-edit" title="编辑24小时以内的记录" >编辑</a>
+	</div>
+	<table id="dgrid" title="">
+		<thead>
+			<tr>
+                <th field="Group" width="120" align="center" >当班班组</th>
+                <th field="StartTime" width="160" align="center" >起始时间</th>
+                <th field="EndTime" width="100" align="center" >结束时间</th>
+                <th field="RecordType" width="180" align="center" >记录项目</th>
+                <th field="Amount" width="120" align="center" formatter="fmt_ton" >数值</th>
+			</tr>
+		</thead>
+	</table>
+    <script type="text/javascript">
+        $(function () {
+            $('#dgrid').formgrid({
+                loader: function (param, success, error) {
+                    var ps = {
+                        view:'all',
+                        start: $('#start').datebox('getValue'),
+                        end: $('#end').datebox('getValue'),
+                        RecordType: $('#RecordType').val()
+                    };
+                    new ConsumeService().ListRecord(ps, success, error);
+                },
+                pagination: true,
+                pageSize: 50,
+                pageList: [50, 100]
+            });
+        });
+    </script>
+</body>
+</html>

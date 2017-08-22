@@ -36,9 +36,9 @@ StoreService.prototype =
     },
     implement: function (method, prams, onResult, onError) {
         var url = 'http://' + location.host + this.name + '?$m=' + method;
-        url = url.replace(':1033', ':8090');
-        for (var attr in prams)
-            prams[attr] = prams[attr] ? escape(prams[attr]) : prams[attr];
+        // url = url.replace(':1033', ':8090');
+        // for (var attr in prams)
+        //     prams[attr] = prams[attr] ? escape(prams[attr]) : prams[attr];
         if (onResult) {
             this.ajaxInvoke(url, prams, onResult, onError);
         }

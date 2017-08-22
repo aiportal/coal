@@ -24,6 +24,7 @@
         <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-save" onclick="$('#dgrid').formgrid('saveRow');">保存</a>
         <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-undo" onclick="$('#dgrid').formgrid('cancelRow');">取消</a>
         <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-refresh" onclick="$('#dgrid').formgrid('reload');">刷新</a>
+        <a href="ChunkTransfer_Query.htm" class="easyui-linkbutton" iconCls="icon-search" title="查询历史记录" >查询</a>
 	</div>
 	<table id="dgrid" title="">
 		<thead>
@@ -41,8 +42,6 @@
                     editor="{type:'numberbox',options:{required:true, precision:3}}" >数量</th>
 		        <th field="DestStore" width="120" align="center"
                     editor="{type:'dropdown',options:{required:true, items:'B105,B118,B118A'}}">卸车地点</th>
-                <!--<th field="BalanceCode" width="120" align="center"
-                    editor="{type:'dropdown',options:{required:true, items:'W1003', value:'W1003'}}" >地磅</th>-->
 			</tr>
 		</thead>
 	</table>
@@ -50,79 +49,13 @@
     <script type="text/javascript">
         $(function () {
             var svc = new StoreService();
-            var obj = { MoveType: 'Transfer'};
             $('#dgrid').formgrid({
                 url: svc.ListMove({ type: 'Transfer' }),
-                insertUrl: svc.SetMove(obj),
-                updateUrl: svc.SetMove(obj),
-                destroyUrl: svc.RemoveMove()
+                insertUrl: svc.SetMove({ MoveType: 'Transfer'}),
+                updateUrl: svc.SetMove({ MoveType: 'Transfer'}),
+                destroyUrl: svc.RemoveMove(),
+                pagination: true
             });
-        });
-        function fmt_ton(v) {
-            return ($.isNumeric(v) ? parseFloat(v).toFixed(3) : v) + ' 吨';
-        }
-    </script>
-
-    <script type="text/javascript">
-        $.extend($.fn.datagrid.defaults.editors, {
-            program: {
-                init: function (container, options) {
-                    var filter = function (data) {
-                        $(data).each(function (k, v) {
-                            v.id = escape(v.Path);
-                            v.text = v.Path;
-                            v.state = v.IsProgram ? 'opened' : 'closed';
-                            if (v.Path.length <= 3)
-                                v.iconCls = 'icon-save';
-                            if (v.IsProgram)
-                                v.iconCls = 'icon-ok';
-                        });
-                        return data;
-                    };
-                    var input = $('<ul></ul>').appendTo(container);
-                    setTimeout(function () {
-                        var current = null;
-                        $(input).combotree($.extend({}, options, {
-                            panelHeight: 500,
-                            url: new Configuration().ListProgram(),
-                            loadFilter: filter,
-                            formatter: function (val) {
-                                return val.Name;
-                            },
-                            onBeforeSelect: function (node) {
-                                current = node;
-                                var path = unescape(node.id);
-                                var ext = path.substring(path.length - 4).toLowerCase();
-                                return (ext == '.exe');
-                            }//,
-//                            onHidePanel: function () {
-//                                var node = $(this).combotree('tree').tree('getSelected');
-//                                node = (node == current) ? node : current;
-//                                var path = node ? unescape(node.id) : null;
-//                                var ext = path ? path.substring(path.length - 4).toLowerCase() : null;
-//                                if (ext != '.exe')
-//                                    $(this).combotree('showPanel');
-//                            },
-//                            onDblClick: function (node) {
-//                                $(this).tree('toggle', node.target);
-//                            }
-                        }));
-                    }, 0);
-                    return input;
-                },
-                destroy: function (target) {
-                    $(target).remove();
-                },
-                getValue: function (target) {
-                    return $(target).combotree('getText');
-                },
-                setValue: function (target, value) {
-                    $(target).val(value);
-                },
-                resize: function (target, width) {
-                    $(target)._outerWidth(width);
-                }
-            }
         });
     </script>
     

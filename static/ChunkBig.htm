@@ -24,6 +24,7 @@
         <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-save" onclick="$('#dgrid').formgrid('saveRow');">保存</a>
         <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-undo" onclick="$('#dgrid').formgrid('cancelRow');">取消</a>
         <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-refresh" onclick="$('#dgrid').formgrid('reload');">刷新</a>
+        <a href="ChunkBig_Query.htm" class="easyui-linkbutton" iconCls="icon-search" title="查询历史记录" >查询</a>
 	</div>
 	<table id="dgrid" title="">
 		<thead>
@@ -47,12 +48,10 @@
                 url: svc.ListMove({ type: 'Big' }),
                 insertUrl: svc.SetMove(obj),
                 updateUrl: svc.SetMove(obj),
-                destroyUrl: svc.RemoveMove()
+                destroyUrl: svc.RemoveMove(),
+                pagination: true
             });
         });
-        function fmt_ton(v) {
-            return ($.isNumeric(v) ? parseFloat(v).toFixed(3) : v) + ' 吨';
-        }
     </script>
 </body>
 </html>

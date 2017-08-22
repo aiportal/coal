@@ -55,7 +55,7 @@ class StoreMove(MainModel):
     ID = peewee.IntegerField(db_column='MoveId', primary_key=True)
     Name = peewee.CharField(db_column='MoveCode', unique=True, help_text='唯一标识')
     Group = peewee.CharField(index=True, help_text='当班班组')
-    MoveTime = peewee.DateTimeField(help_text='操作时间')
+    MoveTime = peewee.DateTimeField(index=True, help_text='操作时间')
     MoveType = peewee.CharField(help_text='操作类型')
     StoreCode = peewee.CharField(help_text='来源堆场')
     BalanceCode = peewee.CharField(help_text='地磅/输送带', null=True)
