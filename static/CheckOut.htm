@@ -32,12 +32,10 @@
 		        <th field="Name" width="80" align="center" >票据号</th>
                 <th field="CarCode" width="100" align="center" >车牌号</th>
                 <th field="CoalType" width="60" align="center" >煤种</th>
-                <th field="StoreCode" width="80" align="center" editor="{type:'dropdown',options:{required:true, items:'B101,B118,B118A,北堆场'}}" >卸车场地</th>
-                <th field="BlackList" width="40" align="center" editor="boolean" formatter="fmt_bool" >黑名单</th>
-                <th field="WholeSeal" width="60" align="center" editor="boolean" formatter="fmt_seal" >封条完好</th>
-                <th field="WholeHeap" width="60" align="center" editor="boolean" formatter="fmt_heap" >堆型完好</th>
-		        <th field="CheckResult" width="180" align="center" formatter="fmt_content" editor="textarea" >检测结果</th>
-		        <th field="ExamResult" width="180" align="center" formatter="fmt_content" editor="textarea" >抽检结果</th>
+                <th field="Water" width="80" align="right" halign="center" formatter="fmt_percent"
+                    editor="{type:'numberbox',options:{required:true, max:100, precision:2}}" >水分</th>
+                <th field="Impurity" width="80" align="right" halign="center" formatter="fmt_percent"
+                    editor="{type:'numberbox',options:{required:true, max:100, precision:2}}" >灰分</th>
                 <th field="ViolateRule" width="40" align="center" editor="boolean" formatter="fmt_bool" >违规</th>
                 <th field="ViolateReason" width="180" align="center" formatter="fmt_content" editor="textarea" >违规原因</th>
                 <th field="TimeStamp" width="120" align="center">检测时间</th>
@@ -56,20 +54,18 @@
                 nowrap:false
             });
         });
-        function fmt_percent(val) {
-            var v = val.toFixed(2);
-            return (v > 0 ? '+' : '') + v + ' %';
+        function fmt_percent(v) {
+            if ($.isNumeric(v)) {
+                return parseFloat(v).toFixed(2) + ' %';
+            } else {
+                return v ? v : '';
+            }
         }
         function fmt_bool(v) {
             return v ? '是' : '';
         }
-        function fmt_seal(v) {
-            return v ? '完好' : (v == null ? '' : '破损');
-        }
-        function fmt_heap(v) {
-            return v ? '是' : (v == null ? '' : '否');
-        }
         function fmt_content(v) {
+            v = v ? v : '';
             return '<span title="'+ v +'">'+ v +'</span>';
         }
     </script>

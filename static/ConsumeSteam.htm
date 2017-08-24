@@ -32,19 +32,25 @@
                 <th field="Group" width="120" align="center"
                     editor="{type:'dropdown',options:{required:true, items:'二车间一班组,二车间二班组,二车间三班组,二车间四班组'}}" >当班班组</th>
                 <th field="ConsumeTime" width="160" align="center"
-                    editor="{type:'datetime',options:{required:true}}" >上料时间</th>
+                    editor="{type:'datetime',options:{required:true}}" >填报时间</th>
                 <th field="StoreCode" width="100" align="center"
-                    editor="{type:'dropdown',options:{required:true, items:'B118,B118A,B109,B105'}}" >仓储</th>
+                    editor="{type:'dropdown',options:{required:true, items:'B105', value:'B105'}}" >仓储</th>
 		        <th field="OutBalance" width="100" align="center"
-                    editor="{type:'dropdown',options:{required:true, items:'W1001A,W1001B,W1002,WIQ16101'}}" >出库电子秤</th>
-		        <th field="OutAmount" width="100" align="right" halign="center" formatter="fmt_ton"
-                    editor="{type:'numberbox',options:{required:true, precision:3}}" >出库计量数</th>
+                    editor="{type:'dropdown',options:{required:true, items:'W1007', value:'W1007'}}" >出库电子秤</th>
+		        <th field="OutStart" width="80" align="right" halign="center" formatter="fmt_ton"
+                    editor="{type:'numberbox',options:{required:true, precision:3}}" >接班值</th>
+		        <th field="OutEnd" width="80" align="right" halign="center" formatter="fmt_ton"
+                    editor="{type:'numberbox',options:{required:true, precision:3}}" >交班值</th>
+		        <th field="OutAmount" width="80" align="right" halign="center" formatter="fmt_ton" >出库计量数</th>
 		        <th field="InBalance" width="100" align="center"
-                    editor="{type:'dropdown',options:{required:true, items:'W1001A,W1001B,W1002,WIQ16101'}}" >入炉电子秤</th>
-		        <th field="InAmount" width="100" align="right" halign="center" formatter="fmt_ton"
-                    editor="{type:'numberbox',options:{required:true, precision:3}}" >入炉计量数</th>
+                    editor="{type:'dropdown',options:{required:true, items:'W1001A,W1001B'}}" >入炉电子秤</th>
+		        <th field="InStart" width="80" align="right" halign="center" formatter="fmt_ton"
+                    editor="{type:'numberbox',options:{required:true, precision:3}}" >接班值</th>
+		        <th field="InEnd" width="80" align="right" halign="center" formatter="fmt_ton"
+                    editor="{type:'numberbox',options:{required:true, precision:3}}" >交班值</th>
+		        <th field="InAmount" width="80" align="right" halign="center" formatter="fmt_ton" >入炉计量数</th>
 		        <th field="BufferCode" width="120" halign="center"
-                    editor="{type:'boiler',options:{required:true}}">汽化炉</th>
+                    editor="{type:'dropdown',options:{required:true, items:'200#-A,200#-B'}}">气化炉</th>
 			</tr>
 		</thead>
 	</table>
@@ -54,69 +60,13 @@
             var svc = new ConsumeService();
             $('#dgrid').formgrid({
                 url: svc.ListFireIn({type:'Steam'}),
-                insertUrl: svc.SetFireIn({MoveType:'Steam'}),
-                updateUrl: svc.SetFireIn({MoveType:'Steam'}),
+                insertUrl: svc.SetFireIn({type:'Steam'}),
+                updateUrl: svc.SetFireIn({type:'Steam'}),
                 destroyUrl: svc.RemoveFireIn(),
                 pagination: true
             });
         });
     </script>
 
-    <script type="text/javascript">
-        $.extend($.fn.datagrid.defaults.editors, {
-            boiler: {
-                init: function (container, options) {
-                    var input = $('<ul></ul>').appendTo(container);
-                    setTimeout(function () {
-                        var current = null;
-                        $(input).combotree($.extend({}, options, {
-                            panelHeight: 300,
-                            data: [
-                                { text: '1600#AB', state: 'closed', children: [
-                                        { text: '1600#AB-1#' },
-                                        { text: '1600#AB-2#' },
-                                        { text: '1600#AB-3#' },
-                                        { text: '1600#AB-4#' },
-                                        { text: '1600#AB-5#' },
-                                        { text: '1600#AB-6#' }
-                                    ]
-                                },
-                                { text: '1600#C', state: 'closed', children: [
-                                        { text: '1600#C-A' },
-                                        { text: '1600#C-B' },
-                                        { text: '1600#C-C' },
-                                        { text: '1600#C-D' },
-                                        { text: '1600#C-E' }
-                                    ]
-                                },
-                                { text: '200#', state: 'closed', children: [
-                                        { text: '200#-A' },
-                                        { text: '200#-B' }
-                                    ]
-                                }
-                            ]
-                        }));
-                    }, 0);
-                    return input;
-                },
-                destroy: function (target) {
-                    $(target).remove();
-                },
-                getValue: function (target) {
-                    return $(target).combotree('getText');
-                },
-                setValue: function (target, value) {
-                    $(target).val(value);
-                },
-                resize: function (target, width) {
-                    $(target)._outerWidth(width);
-                    setTimeout(function () {
-                        $(target).combotree('resize', width);
-                    });
-                }
-            }
-        });
-    </script>
-    
 </body>
 </html>

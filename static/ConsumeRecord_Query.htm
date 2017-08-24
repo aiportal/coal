@@ -20,18 +20,27 @@
     <div id="toolbar" style="padding:5px;height:auto;">
 		起始时间: <input id="start" style="width:140px" class="easyui-datetimebox" showSeconds="false" />
 		到: <input id="end" style="width:140px" class="easyui-datetimebox" showSeconds="false" />
-        记录项目: <input id="RecordType" style="width:80px" class="easyui-validatebox" />
         <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" onclick="$('#dgrid').formgrid('reload');">刷新</a>
         <a href="ConsumeRecord.htm" class="easyui-linkbutton" iconCls="icon-edit" title="编辑24小时以内的记录" >编辑</a>
 	</div>
 	<table id="dgrid" title="">
 		<thead>
+            <tr>
+                <th field="Group" width="120" align="center" rowspan="2" >当班班组</th>
+                <th field="RecordTime" width="160" align="center" rowspan="2" >填报时间</th>
+                <th colspan="3" >用电总量</th>
+                <th colspan="3" >粉煤筛块</th>
+                <th field="Ratio" width="100" align="right" halign="center" rowspan="2" formatter="fmt_power" >吨煤用电</th>
+                <th field="Dust" width="100" align="right" halign="center" rowspan="2" formatter="fmt_percent" >块中含粉量</th>
+                <th field="Rock" width="100" align="right" halign="center" rowspan="2" formatter="fmt_percent" >块中含矸量</th>
+            </tr>
 			<tr>
-                <th field="Group" width="120" align="center" >当班班组</th>
-                <th field="StartTime" width="160" align="center" >起始时间</th>
-                <th field="EndTime" width="100" align="center" >结束时间</th>
-                <th field="RecordType" width="180" align="center" >记录项目</th>
-                <th field="Amount" width="120" align="center" formatter="fmt_ton" >数值</th>
+		        <th field="PowerStart" width="80" align="right" halign="center" formatter="fmt_power" >接班值</th>
+		        <th field="PowerEnd" width="80" align="right" halign="center" formatter="fmt_power" >交班值</th>
+                <th field="PowerAmount" width="120" align="center" formatter="fmt_power" >计量值</th>
+		        <th field="CoalStart" width="80" align="right" halign="center" formatter="fmt_ton" >接班值</th>
+		        <th field="CoalEnd" width="80" align="right" halign="center" formatter="fmt_ton" >交班值</th>
+                <th field="CoalAmount" width="120" align="center" formatter="fmt_ton" >计量值</th>
 			</tr>
 		</thead>
 	</table>
@@ -42,8 +51,7 @@
                     var ps = {
                         view:'all',
                         start: $('#start').datebox('getValue'),
-                        end: $('#end').datebox('getValue'),
-                        RecordType: $('#RecordType').val()
+                        end: $('#end').datebox('getValue')
                     };
                     new ConsumeService().ListRecord(ps, success, error);
                 },
@@ -52,6 +60,20 @@
                 pageList: [50, 100]
             });
         });
+        function fmt_power(v) {
+            if (v) {
+                return parseFloat(v).toFixed(2) + ' 度';
+            } else {
+                return '';
+            }
+        }
+        function fmt_percent(v) {
+            if ($.isNumeric(v)) {
+                return parseFloat(v).toFixed(2) + ' %';
+            } else {
+                return v ? v : '';
+            }
+        }
     </script>
 </body>
 </html>

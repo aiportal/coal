@@ -19,8 +19,9 @@
 </head>
 <body>
     <div id="toolbar" style="padding:5px;height:auto;">
-		登记时间: <input id="start" style="width:140px" class="easyui-datetimebox" showSeconds="false" required />
+		时间: <input id="start" style="width:140px" class="easyui-datetimebox" showSeconds="false" required />
 		到: <input id="end" style="width:140px" class="easyui-datetimebox" showSeconds="false" required />
+        班组: <input id="Group" style="width:80px" class="easyui-validatebox" />
         产地: <input id="Locality" style="width:80px" class="easyui-validatebox" />
         煤种: <input id="CoalType" style="width:80px;" class="easyui-validatebox" />
         卸车场地: <input id="StoreCode" style="width:80px;" class="easyui-validatebox" />
@@ -31,6 +32,7 @@
 	<table id="dgrid" title="">
 		<thead>
 			<tr>
+                <th field="Group" width="120" align="center" >班组</th>
                 <th field="Name" width="120" align="center" formatter="fmt_store" >票据号</th>
                 <th field="Locality" width="80" align="center" >产地</th>
                 <th field="CarCode" width="100" align="center" >车牌号</th>
@@ -47,6 +49,7 @@
                     var ps = {
                         start: $('#start').datebox('getValue'),
                         end: $('#end').datebox('getValue'),
+                        Group: $('#Group').val(),
                         Locality: $('#Locality').val(),
                         CoalType: $('#CoalType').val(),
                         StoreCode: $('#StoreCode').val()

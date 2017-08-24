@@ -41,9 +41,11 @@ class CheckService(View):
         if end:
             q = q.where(CheckIn.BookTime < datetime.strptime(end, DATETIME_FMT))
 
-        Name = args.get('Name')
+        Name, StoreCode = args.get('Name'), args.get('StoreCode')
         if Name:
             q = q.where(CheckIn.Name.contains(Name))
+        if StoreCode:
+            q = q.where(CheckIn.StoreCode.contains(StoreCode))
 
         js = json.dumps({
             'total': q.count(True),
@@ -55,13 +57,18 @@ class CheckService(View):
     def SetCheckIn(cls):
         cls.check_book_code()
         cls.check_book_time()
-        r1 = CheckIn.new(request.form)
-        r2 = CheckOut.new(request.form)
+        r = CheckIn.new(request.form)                                       # type:CheckIn
+        r_db = r.ID and CheckIn.get(ID=r.ID) or None                        # type:CheckIn
+        r_copy = CheckOut.new(request.form)                                 # type:CheckOut
         with db_main.atomic():
-            r1.save()
-            r2.save()
-        r1 = CheckIn.get(Name=r1.Name)
-        return str(r1)
+            r.save()
+            if r_db:
+                Storage.SubStorage(r_db.StoreCode, r_db.RealWeight)         # 恢复库存
+            Storage.AddStorage(r.StoreCode, float(r.RealWeight))            # 加库存
+            r_copy.save()
+
+        r = CheckIn.get(Name=r.Name)
+        return str(r)
 
     @staticmethod
     def check_book_code():  # 检查表单编号是否存在
@@ -80,7 +87,7 @@ class CheckService(View):
         book_time = datetime.strptime(book_time, DATETIME_FMT)
         leave_time = request.form.get('LeaveTime')
         leave_time = datetime.strptime(leave_time, DATETIME_FMT)
-        if leave_time <= book_time:
+        if leave_time < book_time:
             raise Exception('离场时间应晚于登记时间')
         if min_time < book_time < max_time:
             return
@@ -89,7 +96,7 @@ class CheckService(View):
     @staticmethod
     def RemoveCheckIn():
         rid = request.form['id']
-        r = CheckOut.get_by_id(rid)
+        r = CheckIn.get(ID=rid)
         q1 = CheckIn.delete().where(CheckIn.Name == r.Name)
         q2 = CheckOut.delete().where(CheckOut.Name == r.Name)
         with db_main.atomic():
@@ -116,13 +123,17 @@ class CheckService(View):
         if end:
             q = q.where(CheckOut.TimeStamp < datetime.strptime(end, DATETIME_FMT))
 
-        Name, CarCode, StoreCode = args.get('Name'), args.get('CarCode'), args.get('StoreCode')
+        startGps, endGps = args.get('startGps'), args.get('endGps')
+        if startGps:
+            q = q.where(CheckOut.StartTime > datetime.strptime(startGps, DATETIME_FMT))
+        if endGps:
+            q = q.where(CheckOut.StartTime < datetime.strptime(endGps, DATETIME_FMT))
+
+        Name, CarCode = args.get('Name'), args.get('CarCode')
         if Name:
             q = q.where(CheckOut.Name.contains(Name))
         if CarCode:
             q = q.where(CheckOut.CarCode.contains(CarCode))
-        if StoreCode:
-            q = q.where(CheckOut.StoreCode.contains(StoreCode))
 
         js = json.dumps({
             'total': q.count(True),
@@ -135,14 +146,9 @@ class CheckService(View):
         r_form = CheckOut.new(request.form)         # type:CheckOut
         if not r_form.ID:
             raise Exception('错误操作：检测记录不可添加')
-        r_db = CheckOut.get_by_id(r_form.ID)        # type:CheckOut
-        r_in = CheckIn.get(Name=r_db.Name)          # type:CheckIn
-        r_in.StoreCode = r_form.StoreCode
         with db_main.atomic():
             r_form.TimeStamp = ('{0:' + DATETIME_FMT + '}').format(datetime.now())
             r_form.save()
-            r_in.save()
-            Storage.MoveStorage(r_db.StoreCode, r_form.StoreCode, r_db.RealWeight)      # 调整库存
 
         r = CheckOut.get(Name=r_form.Name)
         return str(r)
@@ -151,12 +157,13 @@ class CheckService(View):
     def SumCheckIn():
         args = request.args
         start, end = args.get('start'), args.get('end')
-        Locality, CoalType, StoreCode = args.get('Locality'), args.get('CoalType'), args.get('StoreCode')
+        Group, Locality = args.get('Group'), args.get('Locality')
+        CoalType, StoreCode  = args.get('CoalType'), args.get('StoreCode')
         if not start or not end:
             return '[]'
-        q = CheckIn.select(CheckIn.Name, CheckIn.Locality, CheckIn.CarCode,
-                           CheckIn.CoalType, CheckIn.StoreCode, CheckIn.RealWeight)\
-            .where(start <= CheckIn.BookTime <= end)
+        q = CheckIn.select().where(start <= CheckIn.BookTime <= end)
+        if Group:
+            q = q.where(CheckIn.Group.contains(Group))
         if Locality:
             q = q.where(CheckIn.Locality.contains(Locality))
         if CoalType:

@@ -120,7 +120,7 @@ class ConsumeService(View):
     @classmethod
     def SetFireIn(cls):
         cls.check_fire_time()
-        t = request.args.get('type') or 'Boil'
+        t = request.args.get('type')
         r = ConsumeFire.new(request.form)                   # type:ConsumeFire
         r.ConsumeType = t
         r_old = r.ID and ConsumeFire.get(ID=r.ID) or None   # type:ConsumeFire
@@ -153,11 +153,11 @@ class ConsumeService(View):
 
     @staticmethod
     def ListRecord():
-        q = FireRecord.select().order_by(-FireRecord.StartTime)
+        q = FireRecord.select().order_by(-FireRecord.RecordTime)
         view_all = request.args.get('view') == 'all'
         if not view_all:
             start = datetime.now() - timedelta(days=1)
-            q = FireRecord.select().where(FireRecord.StartTime > start)
+            q = FireRecord.select().where(FireRecord.RecordTime > start)
 
         page, rows = request.form.get('page') or 1, request.form.get('rows') or 50
         q = q.paginate(int(page), int(rows))
@@ -165,13 +165,9 @@ class ConsumeService(View):
         args = request.args
         start, end = args.get('start'), args.get('end')
         if start:
-            q = q.where(FireRecord.StartTime > datetime.strptime(start, DATETIME_FMT))
+            q = q.where(FireRecord.RecordTime > datetime.strptime(start, DATETIME_FMT))
         if end:
-            q = q.where(FireRecord.StartTime < datetime.strptime(end, DATETIME_FMT))
-
-        RecordType = args.get('RecordType')
-        if RecordType:
-            q = q.where(FireRecord.RecordType.contains(RecordType))
+            q = q.where(FireRecord.RecordTime < datetime.strptime(end, DATETIME_FMT))
 
         js = json.dumps({
             'total': q.count(True),
@@ -191,7 +187,7 @@ class ConsumeService(View):
     def check_record_time():
         min_time = datetime.now() - timedelta(hours=12)
         max_time = datetime.now() + timedelta(hours=1)
-        tm = datetime.strptime(request.form['StartTime'], DATETIME_FMT)
+        tm = datetime.strptime(request.form['RecordTime'], DATETIME_FMT)
         if min_time < tm < max_time:
             return
         raise Exception('开始时间应在12小时以内')

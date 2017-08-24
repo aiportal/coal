@@ -59,16 +59,19 @@ class StoreMove(MainModel):
     MoveType = peewee.CharField(help_text='操作类型')
     StoreCode = peewee.CharField(help_text='来源堆场')
     BalanceCode = peewee.CharField(help_text='地磅/输送带', null=True)
+    BalanceStart = peewee.FloatField(null=True, help_text='接班值')
+    BalanceEnd = peewee.FloatField(null=True, help_text='交班值')
     Locality = peewee.CharField(help_text='产地', null=True)
     CoalType = peewee.CharField(help_text='煤种')
-    Amount = peewee.FloatField(help_text='数量')
     DestStore = peewee.CharField(help_text='卸车地点')
-    # Timestamp = peewee.DateTimeField(default=datetime.now, help_text='时间戳')
+    Amount = peewee.FloatField(help_text='数量')
 
 
 @pre_save(sender=StoreMove)
 def store_name(sender, instance, created):
-    r = instance    # type:StoreMove
+    r = instance                                                        # type:StoreMove
+    if r.BalanceStart and r.BalanceEnd:
+        r.Amount = float(r.BalanceEnd) - float(r.BalanceStart)
     if created:
        r.Name = str(uuid.uuid1()).replace('-', '').lower()
 

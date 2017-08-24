@@ -58,7 +58,11 @@ function fmt_password(val) {
 }
 
 function fmt_ton(v) {
-    return ($.isNumeric(v) ? parseFloat(v).toFixed(3) : v) + ' 吨';
+    if (v) {
+        return ($.isNumeric(v) ? parseFloat(v).toFixed(3) : v) + ' 吨';
+    } else {
+        return '';
+    }
 }
 
 function err_apply(err) {
