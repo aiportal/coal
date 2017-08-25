@@ -1,6 +1,6 @@
 ﻿
 var Configuration = function (type) {
-    this.name = '/Configuration.svc';
+    this.name = '/Config.svc';
     this.type = type ? type : 'GET';
     this.ListBalance = function (p, onResult, onError) { return this.implement('ListBalance', p, onResult, onError); };
     this.ListBalance.params = {};

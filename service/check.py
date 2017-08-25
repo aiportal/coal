@@ -85,10 +85,6 @@ class CheckService(View):
         max_time = datetime.now() + timedelta(hours=1)
         book_time = request.form.get('BookTime')
         book_time = datetime.strptime(book_time, DATETIME_FMT)
-        leave_time = request.form.get('LeaveTime')
-        leave_time = datetime.strptime(leave_time, DATETIME_FMT)
-        if leave_time < book_time:
-            raise Exception('离场时间应晚于登记时间')
         if min_time < book_time < max_time:
             return
         raise Exception('登记时间应在12小时以内')

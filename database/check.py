@@ -10,7 +10,6 @@ class CheckIn(MainModel):
     Name = peewee.CharField(db_column='BookCode', unique=True, help_text='票据号')
     Group = peewee.CharField(index=True, help_text='当班班组')
     BookTime = peewee.DateTimeField(index=True, help_text='登记时间')
-    LeaveTime = peewee.DateTimeField(help_text='离场时间')
     Locality = peewee.CharField(help_text='产地', null=True)
     CarCode = peewee.CharField(help_text='车牌号', null=True)
     CoalType = peewee.CharField(help_text='煤种')
@@ -18,6 +17,7 @@ class CheckIn(MainModel):
     BookWeight = peewee.FloatField(help_text='矿发量/登记重量')
     RealWeight = peewee.FloatField(help_text='复秤量/实测重量')
     Difference = peewee.FloatField(help_text='误差重量')
+    LeaveTime = peewee.DateTimeField(null=True, help_text='离场时间')
 
 
 @pre_save(sender=CheckIn)
