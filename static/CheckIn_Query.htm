@@ -22,6 +22,7 @@
 		登记时间: <input id="start" style="width:140px" class="easyui-datetimebox" showSeconds="false" />
 		到: <input id="end" style="width:140px" class="easyui-datetimebox" showSeconds="false" />
         票据号: <input id="Name" style="width:80px" class="easyui-validatebox" />
+        车牌号: <input id="CarCode" style="width:80px" class="easyui-validatebox" />
         卸车地点: <input id="StoreCode" style="width:80px" class="easyui-validatebox" />
         <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" onclick="$('#dgrid').formgrid('reload');">查询</a>
         <a href="CheckIn.htm" class="easyui-linkbutton" iconCls="icon-edit" title="编辑24小时以内的记录" >编辑</a>
@@ -53,6 +54,7 @@
                         start: $('#start').datebox('getValue'),
                         end: $('#end').datebox('getValue'),
                         Name: $('#Name').val(),
+                        CarCode: $('#CarCode').val(),
                         StoreCode: $('#StoreCode').val()
                     };
                     new CheckService().ListCheckIn(ps, success, error);

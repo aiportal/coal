@@ -41,9 +41,11 @@ class CheckService(View):
         if end:
             q = q.where(CheckIn.BookTime < datetime.strptime(end, DATETIME_FMT))
 
-        Name, StoreCode = args.get('Name'), args.get('StoreCode')
+        Name, CarCode, StoreCode = args.get('Name'), args.get('CarCode'), args.get('StoreCode')
         if Name:
             q = q.where(CheckIn.Name.contains(Name))
+        if CarCode:
+            q = q.where(CheckIn.CarCode.contains(CarCode))
         if StoreCode:
             q = q.where(CheckIn.StoreCode.contains(StoreCode))
 
