@@ -25,7 +25,7 @@ class ConsumeService(View):
     @staticmethod
     def ListSendOut():
         view_all = request.args.get('view') == 'all'
-        q = ConsumeSend.select().order_by(-ConsumeSend.ConsumeTime)
+        q = ConsumeSend.select().order_by(+ConsumeSend.ConsumeTime)
         if not view_all:
             start = datetime.now() - timedelta(days=1)
             q = q.where(ConsumeSend.ConsumeTime > start)
@@ -49,7 +49,6 @@ class ConsumeService(View):
             'rows': [model_to_dict(x) for x in q]
         }, ensure_ascii=False)
         return js
-
 
     @classmethod
     def SetSendOut(cls):
@@ -85,7 +84,7 @@ class ConsumeService(View):
 
     @staticmethod
     def ListFireIn():
-        q = ConsumeFire.select().order_by(-ConsumeFire.ConsumeTime)
+        q = ConsumeFire.select().order_by(+ConsumeFire.ConsumeTime)
         view_all = request.args.get('view') == 'all'
         if not view_all:
             start = datetime.now() - timedelta(days=1)
@@ -153,7 +152,7 @@ class ConsumeService(View):
 
     @staticmethod
     def ListRecord():
-        q = FireRecord.select().order_by(-FireRecord.RecordTime)
+        q = FireRecord.select().order_by(+FireRecord.RecordTime)
         view_all = request.args.get('view') == 'all'
         if not view_all:
             start = datetime.now() - timedelta(days=1)

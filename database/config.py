@@ -14,8 +14,9 @@ class SysConfig(MainModel):
     Subject = peewee.CharField(help_text='分类')
     ItemName = peewee.CharField(help_text='配置项名称')
     ItemValue = peewee.CharField(null=True, max_length=2000, help_text='配置项内容')
-    ItemDesc = peewee.CharField(null=True, max_length=2000, help_text='配置项说明')
     ItemType = peewee.CharField(null=True, help_text='配置项数据类型')
+    Comment = peewee.CharField(null=True, max_length=2000, help_text='注释说明')
+    Extension = peewee.CharField(null=True, max_length=2000, help_text='配置项说明')
 
     @staticmethod
     def getItem(subject: str, name: str):

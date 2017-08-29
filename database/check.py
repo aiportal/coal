@@ -8,7 +8,9 @@ class CheckIn(MainModel):
         db_table = 'CheckIn'
     ID = peewee.IntegerField(db_column='CheckId', primary_key=True)
     Name = peewee.CharField(db_column='BookCode', unique=True, help_text='票据号')
+    SeqNum = peewee.IntegerField(unique=True, help_text='编号')
     Group = peewee.CharField(index=True, help_text='当班班组')
+    User = peewee.CharField(help_text='操作员')
     BookTime = peewee.DateTimeField(index=True, help_text='登记时间')
     Locality = peewee.CharField(help_text='产地', null=True)
     CarCode = peewee.CharField(help_text='车牌号', null=True)
@@ -18,6 +20,8 @@ class CheckIn(MainModel):
     RealWeight = peewee.FloatField(help_text='复秤量/实测重量')
     Difference = peewee.FloatField(help_text='误差重量')
     LeaveTime = peewee.DateTimeField(null=True, help_text='离场时间')
+    LeaveGroup = peewee.CharField(null=True, help_text='离场班组')
+    LeaveUser = peewee.CharField(null=True, help_text='离场操作员')
 
 
 @pre_save(sender=CheckIn)
@@ -60,13 +64,3 @@ def check_parse_fields(sender, instance, created):
 
 if not CheckOut.table_exists():
     CheckOut.create_table()
-
-#
-# class CheckGps(MainModel):
-#     class Meta:
-#         db_table = 'CheckGps'
-#     ID = peewee.IntegerField(db_column='CheckId', primary_key=True)
-#     Name = peewee.CharField(db_column='BookCode', unique=True, help_text='票据号')
-#     Group = peewee.CharField(index=True, help_text='当班班组')
-#     CarCode = peewee.CharField(null=True, help_text='车牌号')
-#     CoalType = peewee.CharField(null=True, help_text='煤种')

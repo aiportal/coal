@@ -2,18 +2,13 @@
 var Configuration = function (type) {
     this.name = '/Config.svc';
     this.type = type ? type : 'GET';
-    this.ListBalance = function (p, onResult, onError) { return this.implement('ListBalance', p, onResult, onError); };
-    this.ListBalance.params = {};
-    this.SetBalance = function (p, onResult, onError) { return this.implement('SetBalance', p, onResult, onError); };
-    this.SetBalance.params = { obj: '' };
-    this.RemoveBalance = function (p, onResult, onError) { return this.implement('RemoveBalance', p, onResult, onError); };
-    this.RemoveBalance.params = { id: '' };
-    this.ListStorage = function (p, onResult, onError) { return this.implement('ListStorage', p, onResult, onError); };
-    this.ListStorage.params = {};
-    this.SetStorage = function (p, onResult, onError) { return this.implement('SetStorage', p, onResult, onError); };
-    this.SetStorage.params = { obj: '' };
-    this.RemoveStorage = function (p, onResult, onError) { return this.implement('RemoveStorage', p, onResult, onError); };
-    this.RemoveStorage.params = { id: '' };
+    this.ListItem = function (p, onResult, onError) { return this.implement('ListItem', p, onResult, onError); };
+    this.ListItem.params = {};
+    this.SetItem = function (p, onResult, onError) { return this.implement('SetItem', p, onResult, onError); };
+    this.SetItem.params = { prams: '' };
+    this.RemoveItem = function (p, onResult, onError) { return this.implement('RemoveItem', p, onResult, onError); };
+    this.RemoveItem.params = { prams: '' };
+
     this.GetLicenseInfo = function (p, onResult, onError) { return this.implement('GetLicenseInfo', p, onResult, onError); };
     this.GetLicenseInfo.params = {};
     this.RegisterLicense = function (p, onResult, onError) { return this.implement('RegisterLicense', p, onResult, onError); };

@@ -25,7 +25,7 @@ class CheckService(View):
     @staticmethod
     def ListCheckIn():
         view_all = request.args.get('view') == 'all'
-        q = CheckIn.select().order_by(-CheckIn.BookTime)
+        q = CheckIn.select().order_by(+CheckIn.BookTime)
         if not view_all:
             # 编辑页面只显示24小时内的信息
             start = datetime.now() - timedelta(days=1)
@@ -106,7 +106,7 @@ class CheckService(View):
     @staticmethod
     def ListCheckOut():
         view_all = request.args.get('view') == 'all'
-        q = CheckOut.select().order_by(-CheckOut.TimeStamp)
+        q = CheckOut.select().order_by(+CheckOut.TimeStamp)
         if not view_all:
             start = datetime.now() - timedelta(days=1)
             q = q.where(CheckOut.TimeStamp > start)

@@ -25,7 +25,7 @@ class StoreService(View):
     @staticmethod
     def ListMove():
         view_all = request.args.get('view') == 'all'
-        q = StoreMove.select().order_by(-StoreMove.MoveTime)
+        q = StoreMove.select().order_by(+StoreMove.MoveTime)
         if not view_all:
             start = datetime.now() - timedelta(days=1)
             q = q.where(StoreMove.TimeStamp > start)
@@ -60,17 +60,18 @@ class StoreService(View):
     def SetMove(cls):
         cls.check_move_time()
         r = StoreMove.new(request.form)                             # type:StoreMove
-        if 'MoveType' in request.args:
-            r.MoveType = request.args['MoveType']
-        if 'CoalType' in request.args:
-            r.CoalType = request.args['CoalType']
-        if 'DestCoal' in request.args:
-            r.DestCoal = request.args['DestCoal']
+        args = request.args
+        if 'MoveType' in args:
+            r.MoveType = args['MoveType']
+        if 'CoalType' in args:
+            r.CoalType = args['CoalType']
+        if 'DestCoal' in args:
+            r.DestCoal = args['DestCoal']
         r_old = r.ID and StoreMove.get(ID=r.ID) or None             # type:StoreMove
         with db_main.atomic():
             r.save()
             if r_old:
-                Storage.MoveStorage(r_old.DestStore, r_old.StoreCode, float(r.Amount))      # 恢复库存
+                Storage.MoveStorage(r_old.DestStore, r_old.StoreCode, float(r_old.Amount))  # 恢复库存
             Storage.MoveStorage(r.StoreCode, r.DestStore, float(r.Amount))                  # 移动库存
         r = StoreMove.get(Name=r.Name)
         return str(r)
