@@ -1,9 +1,10 @@
-from flask import request
+from flask import request, session
 from flask.views import View
 from playhouse.shortcuts import model_to_dict
 from database import db_main
 from database.check import CheckIn, CheckOut
 from database.store import Storage
+from database.config import Account
 import json
 from datetime import datetime, timedelta
 
@@ -62,6 +63,8 @@ class CheckService(View):
         r = CheckIn.new(request.form)                                       # type:CheckIn
         r_db = r.ID and CheckIn.get(ID=r.ID) or None                        # type:CheckIn
         r_copy = CheckOut.new(request.form)                                 # type:CheckOut
+        cls.set_user(r)
+        cls.set_user(r_copy)
         with db_main.atomic():
             r.save()
             if r_db:
@@ -169,3 +172,9 @@ class CheckService(View):
         if StoreCode:
             q = q.where(CheckIn.StoreCode.contains(StoreCode))
         return '[' + ','.join([str(r) for r in q]) + ']'
+
+    @staticmethod
+    def set_user(r: CheckIn):
+        a = Account.get(Name=session.get('user'))   # type: Account
+        r.User = a.Name
+        r.Group = a.Group

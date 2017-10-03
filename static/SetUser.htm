@@ -29,6 +29,9 @@
 	<table id="dgrid" title="">
 		<thead>
 			<tr>
+                <th field="Group" width="120" align="center"
+                    editor="{type:'dropdown',options:{required:true, items:'一车间一班组,一车间二班组,一车间三班组,二车间一班组,二车间二班组,二车间三班组,二车间四班组'}}"
+                    >班组</th>
                 <th field="Alias" width="120" align="center"
                     editor="{type:'validatebox',options:{required:true}}" >姓名</th>
                 <th field="Name" width="120" align="center"

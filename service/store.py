@@ -1,9 +1,10 @@
-from flask import request
+from flask import request, session
 from flask.views import View
 from peewee import fn
 from playhouse.shortcuts import model_to_dict
 from database import db_main
 from database.store import StoreMove, Storage
+from database.config import Account
 import json
 from datetime import datetime, timedelta
 
@@ -60,6 +61,7 @@ class StoreService(View):
     def SetMove(cls):
         cls.check_move_time()
         r = StoreMove.new(request.form)                             # type:StoreMove
+        cls.set_user(r)
         args = request.args
         if 'MoveType' in args:
             r.MoveType = args['MoveType']
@@ -100,3 +102,9 @@ class StoreService(View):
         q = Storage.select(Storage.ID, Storage.Name, fn.sum(Storage.Amount).alias('Amount'))\
             .group_by(Storage.ID, Storage.Name)
         return '[' + ','.join([str(r) for r in q]) + ']'
+
+    @staticmethod
+    def set_user(r: StoreMove):
+        a = Account.get(Name=session.get('user'))   # type: Account
+        r.User = a.Name
+        r.Group = a.Group

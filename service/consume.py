@@ -1,11 +1,13 @@
-from flask import request
+from flask import request, session
 from flask.views import View
 from playhouse.shortcuts import model_to_dict
 from database import db_main
 from database.consume import ConsumeSend, ConsumeFire, FireRecord
 from database.store import Storage
+from database.config import Account
 import json
 from datetime import datetime, timedelta
+from typing import Union
 
 
 DATETIME_FMT = '%Y-%m-%d %H:%M'
@@ -54,6 +56,7 @@ class ConsumeService(View):
     def SetSendOut(cls):
         cls.check_send_time()
         r = ConsumeSend.new(request.form)                   # type:ConsumeSend
+        cls.set_user(r)
         r_old = r.ID and ConsumeSend.get(ID=r.ID) or None   # type:ConsumeSend
         with db_main.atomic():
             r.save()
@@ -121,6 +124,7 @@ class ConsumeService(View):
         cls.check_fire_time()
         t = request.args.get('type')
         r = ConsumeFire.new(request.form)                   # type:ConsumeFire
+        cls.set_user(r)
         r.ConsumeType = t
         r_old = r.ID and ConsumeFire.get(ID=r.ID) or None   # type:ConsumeFire
         with db_main.atomic():
@@ -177,7 +181,8 @@ class ConsumeService(View):
     @classmethod
     def SetRecord(cls):
         cls.check_record_time()
-        r = FireRecord.new(request.form)
+        r = FireRecord.new(request.form)                                        # type: FireRecord
+        cls.set_user(r)
         r.save()
         r = FireRecord.get(Name=r.Name)
         return str(r)
@@ -211,3 +216,9 @@ class ConsumeService(View):
             q = q.where(ConsumeFire.StoreCode.contains(StoreCode))
 
         return '[' + ','.join([str(r) for r in q]) + ']'
+
+    @staticmethod
+    def set_user(r: Union[ConsumeSend, ConsumeFire, FireRecord]):
+        a = Account.get(Name=session.get('user'))   # type: Account
+        r.User = a.Name
+        r.Group = a.Group
