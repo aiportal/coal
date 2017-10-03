@@ -1,7 +1,8 @@
 from flask import request, session, make_response
 from flask.views import View
 import json
-from database.config import SysConfig
+from database.config import Account
+import urllib.parse
 
 
 class LoginService(View):
@@ -18,11 +19,15 @@ class LoginService(View):
     @staticmethod
     def Login():
         user, pwd = request.args.get('user'), request.args.get('pwd')
-        val = SysConfig.getItem('login', user).ItemValue
-        success = (pwd == val)
+        q = Account.select().where(Account.Name == user).where(Account.Password == pwd)
+        success = q.exists()
+        resp = make_response(json.dumps(success))
         if success:
             session['user'] = user
-        return json.dumps(success)
+            r = q[0]    # type:Account
+            resp.set_cookie('username', value=urllib.parse.quote(r.Alias))
+            resp.set_cookie('userrole', value=urllib.parse.quote(r.Role))
+        return resp
 
     @staticmethod
     def Logout():

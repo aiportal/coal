@@ -9,6 +9,11 @@ var Configuration = function (type) {
     this.RemoveItem = function (p, onResult, onError) { return this.implement('RemoveItem', p, onResult, onError); };
     this.RemoveItem.params = { prams: '' };
 
+    this.ListUser = function (p, onResult, onError) { return this.implement('ListUser', p, onResult, onError); };
+    this.SetUser = function (p, onResult, onError) { return this.implement('SetUser', p, onResult, onError); };
+    this.RemoveUser = function (p, onResult, onError) { return this.implement('RemoveUser', p, onResult, onError); };
+    this.ChangePassword = function (p, onResult, onError) { return this.implement('ChangePassword', p, onResult, onError); };
+
     this.GetLicenseInfo = function (p, onResult, onError) { return this.implement('GetLicenseInfo', p, onResult, onError); };
     this.GetLicenseInfo.params = {};
     this.RegisterLicense = function (p, onResult, onError) { return this.implement('RegisterLicense', p, onResult, onError); };
@@ -17,8 +22,6 @@ var Configuration = function (type) {
     this.GetConfigurations.params = {};
     this.SetConfigurations = function (p, onResult, onError) { return this.implement('SetConfigurations', p, onResult, onError); };
     this.SetConfigurations.params = { prams: '' };
-    this.SetAdminPassword = function (p, onResult, onError) { return this.implement('SetAdminPassword', p, onResult, onError); };
-    this.SetAdminPassword.params = { pwd: '' };
 
 };
 Configuration.prototype =
