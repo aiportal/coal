@@ -23,14 +23,15 @@ class CheckService(View):
         except Exception as e:
             return json.dumps({"Exception": str(e)}, ensure_ascii=False)
 
-    @staticmethod
-    def ListCheckIn():
+    @classmethod
+    def ListCheckIn(cls):
         view_all = request.args.get('view') == 'all'
         q = CheckIn.select().order_by(+CheckIn.BookTime)
         if not view_all:
             # 编辑页面只显示24小时内的信息
             start = datetime.now() - timedelta(days=1)
             q = q.where(CheckIn.TimeStamp > start)
+            q = cls.filter_by_user(q)
 
         page, rows = request.form.get('page') or 1, request.form.get('rows') or 50
         q = q.paginate(int(page), int(rows))
@@ -106,13 +107,14 @@ class CheckService(View):
             q2.execute()
         return 'true'
 
-    @staticmethod
-    def ListCheckOut():
+    @classmethod
+    def ListCheckOut(cls):
         view_all = request.args.get('view') == 'all'
         q = CheckOut.select().order_by(+CheckOut.TimeStamp)
         if not view_all:
             start = datetime.now() - timedelta(days=1)
             q = q.where(CheckOut.TimeStamp > start)
+            q = cls.filter_by_user(q)
 
         page, rows = request.form.get('page') or 1, request.form.get('rows') or 50
         q = q.paginate(int(page), int(rows))
@@ -176,5 +178,14 @@ class CheckService(View):
     @staticmethod
     def set_user(r: CheckIn):
         a = Account.get(Name=session.get('user'))   # type: Account
-        r.User = a.Name
-        r.Group = a.Group
+        if not r.User:
+            r.User = a.Alias
+            r.Group = a.Group
+
+    @staticmethod
+    def filter_by_user(q):
+        a = Account.get(Name=session.get('user'))   # type: Account
+        if a.Role != 'admin':
+            return q.where((CheckIn.User == a.Alias) | (CheckIn.LeaveUser == a.Alias) | (CheckIn.LeaveTime == ''))
+        else:
+            return q

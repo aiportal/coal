@@ -23,13 +23,14 @@ class StoreService(View):
         except Exception as e:
             return json.dumps({"Exception": str(e)}, ensure_ascii=False)
 
-    @staticmethod
-    def ListMove():
+    @classmethod
+    def ListMove(cls):
         view_all = request.args.get('view') == 'all'
         q = StoreMove.select().order_by(+StoreMove.MoveTime)
         if not view_all:
             start = datetime.now() - timedelta(days=1)
             q = q.where(StoreMove.TimeStamp > start)
+            q = cls.filter_by_user(q)
 
         page, rows = request.form.get('page') or 1, request.form.get('rows') or 50
         q = q.paginate(int(page), int(rows))
@@ -106,5 +107,13 @@ class StoreService(View):
     @staticmethod
     def set_user(r: StoreMove):
         a = Account.get(Name=session.get('user'))   # type: Account
-        r.User = a.Name
+        r.User = a.Alias
         r.Group = a.Group
+
+    @staticmethod
+    def filter_by_user(q):
+        a = Account.get(Name=session.get('user'))   # type: Account
+        if a.Role != 'admin':
+            return q.where(Storage.User == a.Alias)
+        else:
+            return q

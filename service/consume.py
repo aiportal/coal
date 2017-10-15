@@ -24,13 +24,14 @@ class ConsumeService(View):
         except Exception as e:
             return json.dumps({"Exception": str(e)}, ensure_ascii=False)
 
-    @staticmethod
-    def ListSendOut():
+    @classmethod
+    def ListSendOut(cls):
         view_all = request.args.get('view') == 'all'
         q = ConsumeSend.select().order_by(+ConsumeSend.ConsumeTime)
         if not view_all:
             start = datetime.now() - timedelta(days=1)
             q = q.where(ConsumeSend.ConsumeTime > start)
+            q = cls.filter_by_user(q)
 
         page, rows = request.form.get('page') or 1, request.form.get('rows') or 50
         q = q.paginate(int(page), int(rows))
@@ -85,13 +86,14 @@ class ConsumeService(View):
             r.delete().execute()
         return 'true'
 
-    @staticmethod
-    def ListFireIn():
+    @classmethod
+    def ListFireIn(cls):
         q = ConsumeFire.select().order_by(+ConsumeFire.ConsumeTime)
         view_all = request.args.get('view') == 'all'
         if not view_all:
             start = datetime.now() - timedelta(days=1)
             q = q.where(ConsumeFire.ConsumeTime > start)
+            q = cls.filter_by_user(cls)
 
         page, rows = request.form.get('page') or 1, request.form.get('rows') or 50
         q = q.paginate(int(page), int(rows))
@@ -154,13 +156,14 @@ class ConsumeService(View):
             r.delete().execute()
         return 'true'
 
-    @staticmethod
-    def ListRecord():
+    @classmethod
+    def ListRecord(cls):
         q = FireRecord.select().order_by(+FireRecord.RecordTime)
         view_all = request.args.get('view') == 'all'
         if not view_all:
             start = datetime.now() - timedelta(days=1)
             q = FireRecord.select().where(FireRecord.RecordTime > start)
+            q = cls.filter_by_user(q)
 
         page, rows = request.form.get('page') or 1, request.form.get('rows') or 50
         q = q.paginate(int(page), int(rows))
@@ -220,5 +223,13 @@ class ConsumeService(View):
     @staticmethod
     def set_user(r: Union[ConsumeSend, ConsumeFire, FireRecord]):
         a = Account.get(Name=session.get('user'))   # type: Account
-        r.User = a.Name
+        r.User = a.Alias
         r.Group = a.Group
+
+    @staticmethod
+    def filter_by_user(q):
+        a = Account.get(Name=session.get('user'))   # type: Account
+        if a.Role != 'admin':
+            return q.where(q.model_class.User == a.Alias)
+        else:
+            return q
