@@ -9,6 +9,7 @@
     <script src="res/js/jquery.easyui.min.js" type="text/javascript"></script>
     <script src="res/js/easyui-lang-zh_CN.js" type="text/javascript"></script>
     <script src="res/js/jquery.formgrid.js" type="text/javascript"></script>
+    <script src="res/js/js.cookie-2.1.4.min.js" type="text/javascript"></script>
 
     <script src="res/js/CheckService.js" type="text/javascript"></script>
     <script src="res/js/Configuration.js" type="text/javascript"></script>
@@ -66,8 +67,28 @@
                 updateUrl: svc.SetCheckIn(),
                 destroyUrl: svc.RemoveCheckIn(),
                 pagination: true,
+                showFooter: true,
                 onBeforeEdit: function(index,row){
                     row.RealWeight = row.RealWeight||0;
+                },
+                rowStyler: function(index,row){
+                    if (row.User != Cookies.get('username')){
+                        return 'background-color:#6293BB;color:#fff;font-weight:bold;';
+                    }
+                },
+                loader: function (param, success, error) {
+                    svc.ListCheckIn(param, function(data) {
+                        var f = { SeqNum: 0, User: Cookies.get('username'), BookWeight: 0, RealWeight: 0 };
+                        data.rows.forEach(function(r) {
+                           if (r.LeaveUser == f.User) {
+                               f.SeqNum += 1;
+                               f.BookWeight += r.BookWeight;
+                               f.RealWeight += r.RealWeight;
+                           }
+                        });
+                        data.footer = [f];
+                        success(data);
+                    }, error);
                 }
             });
         });
