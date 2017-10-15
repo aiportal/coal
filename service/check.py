@@ -7,6 +7,7 @@ from database.store import Storage
 from database.config import Account
 import json
 from datetime import datetime, timedelta
+from typing import Union
 
 
 DATETIME_FMT = '%Y-%m-%d %H:%M'
@@ -95,10 +96,12 @@ class CheckService(View):
             return
         raise Exception('登记时间应在12小时以内')
 
-    @staticmethod
-    def RemoveCheckIn():
+    @classmethod
+    def RemoveCheckIn(cls):
         rid = request.form['id']
         r = CheckIn.get(ID=rid)
+        if not cls.valid_user(r):
+            raise Exception('没有权限')
         q1 = CheckIn.delete().where(CheckIn.Name == r.Name)
         q2 = CheckOut.delete().where(CheckOut.Name == r.Name)
         with db_main.atomic():
@@ -181,6 +184,9 @@ class CheckService(View):
         if not r.User:
             r.User = a.Alias
             r.Group = a.Group
+        if not r.LeaveUser and r.LeaveTime:     # 离场登记
+            r.LeaveUser = a.Alias
+            r.LeaveGroup = a.Group
 
     @staticmethod
     def filter_by_user(q):
@@ -189,3 +195,8 @@ class CheckService(View):
             return q.where((CheckIn.User == a.Alias) | (CheckIn.LeaveUser == a.Alias) | (CheckIn.LeaveTime == ''))
         else:
             return q
+
+    @staticmethod
+    def valid_user(r: Union[CheckIn, CheckOut]):
+        a = Account.get(Name=session.get('user'))   # type: Account
+        return r.User == a.Alias
