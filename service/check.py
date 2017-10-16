@@ -194,12 +194,11 @@ class CheckService(View):
     def filter_by_user(q):
         a = Account.get(Name=session.get('user'))   # type: Account
         if a.Role == 'admin':
-            if hasattr(q.model_class, 'LeaveUser'):
-                return q.where((CheckIn.User == a.Alias) | (CheckIn.LeaveUser == a.Alias) | (CheckIn.LeaveTime == ''))
-            else:
-                return q.where(q.model_class.User == a.Alias)
-        else:
             return q
+        if hasattr(q.model_class, 'LeaveUser'):
+            return q.where((CheckIn.User == a.Alias) | (CheckIn.LeaveUser == a.Alias) | (CheckIn.LeaveTime == ''))
+        else:
+            return q.where(q.model_class.User == a.Alias)
 
     @staticmethod
     def valid_user(r: Union[CheckIn, CheckOut]):

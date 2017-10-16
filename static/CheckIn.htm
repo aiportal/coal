@@ -41,7 +41,8 @@
                 <th field="Name" width="80" align="center"
                     editor="{type:'validatebox',options:{required:true}}" >票据号</th>
                 <th field="CarCode" width="80" align="center" editor="text" >车牌号</th>
-                <th field="Locality" width="60" align="center" editor="text" >产地</th>
+                <th field="Locality" width="60" align="center"
+                    editor="{type:'dropdown',options:{required:true, items:'王庄,高平,飞跃,漳村,世康,翔麟'}}" >产地</th>
                 <th field="CoalType" width="60" align="center"
                     editor="{type:'dropdown',options:{required:true, items:'块煤,粉煤'}}" >煤种</th>
                 <th field="BookWeight" width="80" align="right" halign="center" formatter="fmt_ton"
