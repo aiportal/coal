@@ -184,6 +184,8 @@ class CheckService(View):
         if not r.User:
             r.User = a.Alias
             r.Group = a.Group
+        if not hasattr(r, 'LeaveUser'):
+            return
         if not r.LeaveUser and r.LeaveTime:     # 离场登记
             r.LeaveUser = a.Alias
             r.LeaveGroup = a.Group
@@ -191,8 +193,11 @@ class CheckService(View):
     @staticmethod
     def filter_by_user(q):
         a = Account.get(Name=session.get('user'))   # type: Account
-        if a.Role != 'admin':
-            return q.where((CheckIn.User == a.Alias) | (CheckIn.LeaveUser == a.Alias) | (CheckIn.LeaveTime == ''))
+        if a.Role == 'admin':
+            if hasattr(q.model_class, 'LeaveUser'):
+                return q.where((CheckIn.User == a.Alias) | (CheckIn.LeaveUser == a.Alias) | (CheckIn.LeaveTime == ''))
+            else:
+                return q.where(q.model_class.User == a.Alias)
         else:
             return q
 
